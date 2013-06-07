@@ -33,39 +33,46 @@
 	</Layer>
 	
 	<Style name="ZENSUS-STROKE" filter-mode="first">
-		<!-- zoom level 6 or lower -->
+		<!-- zoom level 5 or lower -->
 		<Rule>
 			<MaxScaleDenominator>1000000000</MaxScaleDenominator>
+			<MinScaleDenominator>16000000</MinScaleDenominator>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.01" stroke="#000000"/>
+		</Rule>
+
+		<!-- zoom level 6 -->
+		<Rule>
+			<MaxScaleDenominator>16000000</MaxScaleDenominator>
 			<MinScaleDenominator>8000000</MinScaleDenominator>
-			<LineSymbolizer stroke-width="1" stroke-opacity="0.05" stroke="#000000"/>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.02" stroke="#000000"/>
 		</Rule>
 
 		<!-- zoom level 7 -->
 		<Rule>
 			<MaxScaleDenominator>8000000</MaxScaleDenominator>
 			<MinScaleDenominator>4000000</MinScaleDenominator>
-			<LineSymbolizer stroke-width="1" stroke-opacity="0.09" stroke="#000000"/>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.04" stroke="#000000"/>
 		</Rule>
 
 		<!-- zoom level 8 -->
 		<Rule>
 			<MaxScaleDenominator>4000000</MaxScaleDenominator>
 			<MinScaleDenominator>2000000</MinScaleDenominator>
-			<LineSymbolizer stroke-width="1" stroke-opacity="0.16" stroke="#000000"/>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.08" stroke="#000000"/>
 		</Rule>
 
 		<!-- zoom level 9 -->
 		<Rule>
 			<MaxScaleDenominator>2000000</MaxScaleDenominator>
 			<MinScaleDenominator>1000000</MinScaleDenominator>
-			<LineSymbolizer stroke-width="1" stroke-opacity="0.28" stroke="#000000"/>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.16" stroke="#000000"/>
 		</Rule>
 
 		<!-- zoom level 10 or higher -->
 		<Rule>
 			<MaxScaleDenominator>1000000</MaxScaleDenominator>
 			<MinScaleDenominator>500</MinScaleDenominator>
-			<LineSymbolizer stroke-width="1" stroke-opacity="0.5" stroke="#000000"/>
+			<LineSymbolizer stroke-width="1" stroke-opacity="0.32" stroke="#000000"/>
 		</Rule>
 	</Style>
 
