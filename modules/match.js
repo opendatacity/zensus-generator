@@ -27,7 +27,8 @@ exports.loadGeoJSON = function (filename) {
 				}
 			} else {
 				options.addFields.forEach(function (field) {
-					region.properties[field.name] = field.convert(lut['_'+id][field.name]);
+					var newName = field.newName ? field.newName : field.name;
+					region.properties[newName] = field.convert(lut['_'+id][field.name]);
 				})
 			}
 		})
