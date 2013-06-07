@@ -120,8 +120,8 @@ geojson.generateLokaler({
 			title:'Frauenanteil - Anteil in %',
 			value:function (p) { return 100*p.EW_W/p.EWZ },
 			gradient:gViolettGruen,
-			min: 40,
-			max: 60
+			min: 45,
+			max: 55
 		},
 		{
 			id:'03',
