@@ -124,9 +124,10 @@ var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b
 
 geojson.generateLokaler({
 	nuances: 8*8,
-	mapnikFile: './results/xml/Zensus%.xml',
+	jsonFile: './results/jsons/zensus%.json',
 	gradientFile: './results/skalen/skala-%.png',
 	//previewFile: './results/previews/zensus%.png',
+	mapnikFile: './results/xml/Zensus%.xml',
 	shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
 	fields:[
 		{
@@ -394,4 +395,4 @@ geojson.generateLokaler({
 	]
 });
 
-geojson.saveGeo('./results/shape/gemeinden', true);
+//geojson.saveGeo('./results/shape/gemeinden', false);
