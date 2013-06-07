@@ -117,6 +117,65 @@ exports.loadGeoJSON = function (filename) {
 			}
 		});
 
+		if (options.jsonFile) {
+			console.log('   Generiere JSONs');
+
+			var json = {
+				x0:[],
+				y0:[],
+				width:[],
+				height:[],
+				xc:[],
+				yc:[],
+				title:[],
+				wiki:[],
+				value:[]
+			};
+
+			regions.features.forEach(function (region, i) {
+				var b = calcBoundaries(region.geometry);
+				json.x0[i]     = b.x0.toFixed(0);
+				json.y0[i]     = b.y0.toFixed(0);
+				json.width[i]  = b.w.toFixed(0);
+				json.height[i] = b.h.toFixed(0);
+				json.xc[i]     = (b.xc-b.x0).toFixed(0);
+				json.yc[i]     = (b.yc-b.y0).toFixed(0);
+				json.title[i]  = region.properties.GEN;
+				json.wiki[i]   = region.properties.wiki;
+				if (json.wiki[i] == json.title[i]) json.wiki[i] = 0;
+			});
+
+			options.fields.forEach(function (field) {
+				regions.features.forEach(function (region, i) {
+					var value = region.properties['ZENSUS'+field.id];
+					if (value === undefined) {
+						value = '';
+					} else {
+						value = value.toFixed(3);
+					}
+					json.value[i] = value;
+				});
+
+				var jsonFile = options.jsonFile.replace(/\%/g, field.id);
+				ensureFolder(jsonFile);
+				
+				var result = [];
+				Object.keys(json).forEach(function (key) {
+					var values = JSON.stringify(json[key]);
+					if ((key != 'title') && (key != 'wiki')) values = values.replace(/\'|\"/g, '');
+					result.push('"'+key+'":'+values);
+				});
+				result = result.join('\n');
+				result = '{\n'+result+'\n}';
+				result = result.replace(/\,null\,/g, ',');
+				result = result.replace(/\,null\,/g, ',');
+				result = result.replace(/\,null\,/g, ',');
+
+				fs.writeFileSync(jsonFile, result, 'utf8');
+			});
+
+		}
+
 		if (options.previewFile) {
 			console.log('   Generiere Previews');
 			options.fields.forEach(function (field) {
@@ -339,4 +398,81 @@ var GeoJSON2SVG = function (points, depth) {
 			return 'M'+result.join('L')+'z';
 		}
 	}
+}
+
+var calcBoundaries = function (geometry) {
+
+	var b = {x0:1e10, y0:1e10, x1:-1e10, y1:-1e10};
+
+	var addPoint = function (x, y) {
+		if (b.x0 > x) b.x0 = x;
+		if (b.y0 > y) b.y0 = y;
+		if (b.x1 < x) b.x1 = x;
+		if (b.y1 < y) b.y1 = y;
+	}
+
+	var maxArea, xc, yc;
+
+	var addPolygon = function (poly, depth) {
+		if (depth > 1) {
+			poly.forEach(function (point) { addPolygon(point, depth-1) });
+		} else {
+			var xs = 0;
+			var ys = 0;
+			var area = 0;
+			for (var i = 0; i < poly.length; i++) {
+				var j = (i+1) % poly.length;
+				
+				var x  = poly[i][0];
+				var y  = poly[i][1];
+				var x1 = poly[j][0];
+				var y1 = poly[j][1];
+
+				var a = (x*y1 - x1*y);
+
+				xs   += (x+x1)*a;
+				ys   += (y+y1)*a;
+				area += a;
+
+				addPoint(x,y);
+			}
+			if (Math.abs(area) > maxArea) {
+				xc = xs/(3*area);
+				yc = ys/(3*area);
+				maxArea = Math.abs(area);
+			}
+		}
+	}
+
+	maxArea = -1e10;
+
+	switch (geometry.type) {
+		case 'Polygon':
+			var geo = geometry.coordinates;
+			addPolygon(geo, 2);
+		break;
+		case 'MultiPolygon':
+			var geo = geometry.coordinates;
+			addPolygon(geo, 3);
+		break;
+		default:
+			console.error('Unknown Geometry Type: ' + geometry.type);
+			process.exit();
+	}
+
+	var scaleFactor = 3000;
+
+	var xOffset =  5.8;
+	var yOffset = 47.2;
+
+	b.x0 = Math.round((b.x0-xOffset)*scaleFactor);
+	b.y0 = Math.round((b.y0-yOffset)*scaleFactor);
+	b.x1 = Math.round((b.x1-xOffset)*scaleFactor);
+	b.y1 = Math.round((b.y1-yOffset)*scaleFactor);
+	b.w  = b.x1 - b.x0;
+	b.h  = b.y1 - b.y0;
+	b.xc = Math.round((xc-xOffset)*scaleFactor);
+	b.yc = Math.round((yc-yOffset)*scaleFactor);
+
+	return b;
 }
