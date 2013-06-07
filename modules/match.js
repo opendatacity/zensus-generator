@@ -107,8 +107,13 @@ exports.loadGeoJSON = function (filename) {
 				if (color > options.nuances) color = options.nuances;
 				region.properties['COLOR'+field.id] = (value === undefined) ? 0 : color+1;
 			});
+
+			var field.colors = [field.gradient[0]];
+			for (var i = 0; i <= options.nuances; i++) {
+				field.colors[i+1] = interpolateColor(field.gradient, i/options.nuances);
+			}
 		});
-		
+
 
 		if (options.mapnikFile) {
 			console.log('Generiere Mapnik-XML');
@@ -118,7 +123,7 @@ exports.loadGeoJSON = function (filename) {
 				var rules = [];
 
 				for (var i = 0; i <= options.nuances; i++) {
-					var color = interpolateColor(field.gradient, i/options.nuances);
+					var color = field.colors[i+1];
 					var line = '<Rule><Filter>([COLOR'+field.id+']='+(i+1)+')</Filter><PolygonSymbolizer fill="#'+color+'" fill-opacity="1"/></Rule>';
 					rules.push(line);
 				}
