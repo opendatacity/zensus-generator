@@ -95,6 +95,10 @@ exports.loadGeoJSON = function (filename) {
 			var roundMin = Math.floor(min/bestStep)*bestStep;
 			var roundMax = Math.ceil( max/bestStep)*bestStep;
 
+			field.min = roundMin;
+			field.max = roundMax;
+			field.step = bestStep;
+
 			// Berechne Farben
 			regions.features.forEach(function (region) {
 				var value = region.properties['ZENSUS'+field.id];
@@ -103,9 +107,12 @@ exports.loadGeoJSON = function (filename) {
 				if (color > options.nuances) color = options.nuances;
 				region.properties['COLOR'+field.id] = (value === undefined) ? 0 : color+1;
 			});
+		});
+		
 
-			// Generiere Mapnik-XML
-			if (options.mapnikFile) {
+		if (options.mapnikFile) {
+			console.log('Generiere Mapnik-XML');
+			options.fields.forEach(function (field) {
 				var xml = fs.readFileSync('./mapnik.template.xml', 'utf8');
 
 				var rules = [];
@@ -125,23 +132,25 @@ exports.loadGeoJSON = function (filename) {
 				var mapnikFile = options.mapnikFile.replace(/\%/g, field.id);
 				ensureFolder(mapnikFile);
 				fs.writeFileSync(mapnikFile, xml, 'utf8');
-			}
+			});
+		}
 
-			// Generiere Gradient
-			if (options.gradientFile) {
+		if (options.gradientFile) {
+			console.log('Generiere Gradient');
+			options.fields.forEach(function (field) {
 				var stops = [];
 				for (var i = 1; i < field.gradient.length; i++) {
 					stops.push('<stop offset="'+(i-1)/(field.gradient.length-2)+'" style="stop-color:#'+field.gradient[i]+'"/>');
 				}
 
 				var labels = [];
-				var mini = Math.round(roundMin/bestStep);
-				var maxi = Math.round(roundMax/bestStep);
-				var digits = -Math.log(bestStep)/Math.LN10;
+				var mini = Math.round(field.min/field.step);
+				var maxi = Math.round(field.max/field.step);
+				var digits = -Math.log(field.step)/Math.LN10;
 				digits = Math.ceil(Math.max(digits, 0));
 
 				for (var i = mini+1; i < maxi; i++) {
-					labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*bestStep).toFixed(digits)+'</text>');
+					labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*field.step).toFixed(digits)+'</text>');
 				}
 
 
@@ -165,8 +174,8 @@ exports.loadGeoJSON = function (filename) {
 				fs.writeFileSync(gradientFile+'.svg', svg.join('\n'), 'utf8');
 
 				exec('convert -background white -quality 95 '+gradientFile+'.svg '+gradientFile+' && rm '+gradientFile+'.svg');
-			}
-		})
+			});
+		}
 	}
 
 	return me;
