@@ -108,11 +108,48 @@ exports.loadGeoJSON = function (filename) {
 				region.properties['COLOR'+field.id] = (value === undefined) ? 0 : color+1;
 			});
 
-			var field.colors = [field.gradient[0]];
+			field.colors = [field.gradient[0]];
 			for (var i = 0; i <= options.nuances; i++) {
 				field.colors[i+1] = interpolateColor(field.gradient, i/options.nuances);
 			}
 		});
+
+		if (options.previewFile) {
+			console.log('Generiere Previews');
+			options.fields.forEach(function (field) {
+				var svg = [
+					'<?xml version="1.0" encoding="utf-8"?>',
+					'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+					'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1600px" xml:space="preserve">'
+				];
+				regions.features.forEach(function (region) {
+					var color = field.colors[region.properties['COLOR'+field.id]];
+
+					var path = [];
+					switch (region.geometry.type) {
+						case 'Polygon':
+							path = GeoJSON2SVG(region.geometry.coordinates, 1);
+						break;
+						case 'MultiPolygon':
+							path = GeoJSON2SVG(region.geometry.coordinates, 2);
+						break;
+						default:
+							console.log(region.geometry);
+							process.exit();
+						break;
+					}
+					svg.push('<path d="'+path+'" fill="#'+color+'" stroke-width="0.2" stroke="#000"/>');
+				});
+				svg.push('</svg>');
+				svg.join('\n');
+
+				var previewFile = options.previewFile.replace(/\%/g, field.id);
+				ensureFolder(previewFile);
+				fs.writeFileSync(previewFile+'.svg', svg.join('\n'), 'utf8');
+
+				exec('convert -background white -density 36 -quality 95 '+previewFile+'.svg '+previewFile+' && rm '+previewFile+'.svg');
+			})
+		}
 
 
 		if (options.mapnikFile) {
@@ -247,4 +284,56 @@ var ensureFolder = function (folder) {
 		}
 	}
 	rec(path.dirname(folder));
+}
+
+var GeoJSON2SVG = function (points, depth) {
+	if (depth > 0) {
+		return points.map(function (list) {
+			return GeoJSON2SVG(list, depth-1)
+		}).join(' ');
+	} else {
+		var lastPoint = '';
+		var result = points.map(function (point) {
+			var x = 200*( point[0] -  5.5)*0.616;
+			var y = 200*(-point[1] + 55.1);
+			return x.toFixed(0)+','+y.toFixed(0);
+		});
+
+		do {
+			var smaller = false;
+
+			for (var i = 0; i < result.length; i++) {
+				if ((i >= 1) && (result[i] == result[i-1])) {
+					result[i-1] = undefined;
+					smaller = true;
+				}
+			}
+
+			var temp = [];
+			result.forEach(function (point) {
+				if (point !== undefined) temp.push(point);
+			});
+			result = temp;
+
+			for (var i = 0; i < result.length; i++) {
+				if ((i >= 2) && (result[i] == result[i-2])) {
+					result[i-1] = undefined;
+					result[i-2] = undefined;
+					smaller = true;
+				}
+			}
+
+			var temp = [];
+			result.forEach(function (point) {
+				if (point !== undefined) temp.push(point);
+			});
+			result = temp;
+		} while (smaller);
+
+		if (result.length <= 2) {
+			return '';
+		} else {
+			return 'M'+result.join('L')+'z';
+		}
+	}
 }

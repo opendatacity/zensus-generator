@@ -107,6 +107,7 @@ geojson.generateLokaler({
 	nuances: 8*8,
 	mapnikFile: './results/xml/Zensus%.xml',
 	gradientFile: './results/skalen/skala-%.png',
+	//previewFile: './results/previews/zensus%.png',
 	shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
 	fields:[
 		{
