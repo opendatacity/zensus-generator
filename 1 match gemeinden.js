@@ -104,7 +104,7 @@ var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b
 
 
 geojson.generateLokaler({
-	nuances: 2*8,
+	nuances: 8*8,
 	mapnikFile: './results/gemeinden/xml/Zensus%.xml',
 	gradientFile: './results/gemeinden/skalen/skala-%.png',
 	shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
