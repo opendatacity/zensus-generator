@@ -77,8 +77,8 @@ exports.loadGeoJSON = function (filename) {
 			// Berechne Skale
 			values = values.sort(function (a,b) { return a-b });
 
-			var min = values[Math.round(values.length*0.05)];
-			var max = values[Math.round(values.length*0.95)];
+			var min = values[Math.round(values.length*0.01)];
+			var max = values[Math.round(values.length*0.99)];
 
 			if (field.min) min = field.min;
 			if (field.max) max = field.max;
