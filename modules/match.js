@@ -7,7 +7,7 @@ exports.loadGeoJSON = function (filename) {
 	console.log('Lade GeoJSON "'+filename+'"');
 	var regions = fs.readFileSync(filename, 'utf8');
 
-	console.log('Lese GeoJSON');
+	console.log('   Lese GeoJSON');
 	regions = JSON.parse(regions);
 
 	me.match = function (options) {
@@ -37,12 +37,12 @@ exports.loadGeoJSON = function (filename) {
 	me.saveGeo = function (filename, convertShape) {
 		console.log('Erstelle GeoJSON');
 		var json = JSON.stringify(regions/*, null, '\t'*/);
-		console.log('Speichere GeoJSON');
+		console.log('   Speichere GeoJSON');
 		ensureFolder(filename);
 		fs.writeFileSync(filename+'.geojson', json, 'utf8');	
 
 		if (convertShape) {
-			console.log('Konvertiere zu Shapefile');
+			console.log('   Konvertiere zu Shapefile');
 			exec('ogr2ogr -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson', function (error, stdout, stderr) {
 				if (stdout) console.log('stdout: ' + stdout);
 				if (stderr) console.log('stderr: ' + stderr);
@@ -64,7 +64,9 @@ exports.loadGeoJSON = function (filename) {
 			allowedSteps.push(f*5);
 		}
 
+		console.log('   Berechne Werte');
 		options.fields.forEach(function (field) {
+
 			var values = [];
 			var isFunction = Object.prototype.toString.call(field.value) == '[object Function]';
 
@@ -116,7 +118,7 @@ exports.loadGeoJSON = function (filename) {
 		});
 
 		if (options.previewFile) {
-			console.log('Generiere Previews');
+			console.log('   Generiere Previews');
 			options.fields.forEach(function (field) {
 				var svg = [
 					'<?xml version="1.0" encoding="utf-8"?>',
@@ -154,7 +156,7 @@ exports.loadGeoJSON = function (filename) {
 
 
 		if (options.mapnikFile) {
-			console.log('Generiere Mapnik-XML');
+			console.log('   Generiere Mapnik-XML');
 			options.fields.forEach(function (field) {
 				var xml = fs.readFileSync('./mapnik.template.xml', 'utf8');
 
@@ -179,7 +181,7 @@ exports.loadGeoJSON = function (filename) {
 		}
 
 		if (options.gradientFile) {
-			console.log('Generiere Gradient');
+			console.log('   Generiere Gradient');
 			options.fields.forEach(function (field) {
 				var stops = [];
 				for (var i = 1; i < field.gradient.length; i++) {
@@ -228,7 +230,7 @@ exports.loadCSV = function (filename) {
 	console.log('Lade CSV "'+filename+'"');
 	var data = fs.readFileSync(filename, 'utf8');
 
-	console.log('Lese CSV');
+	console.log('   Lese CSV');
 	data = data.split('\r\n');
 
 	while (data[data.length-1].replace(/^\s+|\s+$/,'') == '') data.pop();
