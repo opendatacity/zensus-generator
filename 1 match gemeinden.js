@@ -363,6 +363,13 @@ geojson.generateLokaler({
 			title:'Anteil der Wohnungen mit Ofenheizung in %',
 			value:function (p) { return p.WOFENPC },
 			gradient:gWeissBlau
+		},
+
+		{
+			id:'41',
+			title:'Durchschnittliche Wohnfläche pro Einwohner in m²',
+			value:function (p) { return p.MEANFL*p.WWOGEB/p.EWZ },
+			gradient:gWeissBlau
 		}
 	]
 });
