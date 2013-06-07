@@ -4,7 +4,7 @@ var exec = require('child_process').exec;
 exports.loadGeoJSON = function (filename) {
 	var me = this;
 	
-	console.log('Lade GeoJSON');
+	console.log('Lade GeoJSON "'+filename+'"');
 	var regions = fs.readFileSync(filename, 'utf8');
 
 	console.log('Lese GeoJSON');
@@ -224,7 +224,7 @@ exports.loadGeoJSON = function (filename) {
 }
 
 exports.loadCSV = function (filename) {
-	console.log('Lade CSV');
+	console.log('Lade CSV "'+filename+'"');
 	var data = fs.readFileSync(filename, 'utf8');
 
 	console.log('Lese CSV');
