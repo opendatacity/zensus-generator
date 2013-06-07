@@ -21,6 +21,25 @@ geojson.match({
 });
 */
 
+
+geojson.match({
+	data:match.loadCSV('../shared/wikipedia/Gemeinden_wikipedia.csv'),
+	myField:'RAU_RS',
+	foreignField:'RS_ALT,C,20',
+	addFields:[
+		{
+			name:'LINK,C,65',
+			newName: 'wiki',
+			convert:function (v) {
+				if (v == 'none') return undefined;
+				if (v.substr(0, 31) == 'http://de.m.wikipedia.org/wiki/') return v.substr(31);
+				console.log(v);
+			}
+		}
+	],
+	hideWarning: function (properties) { return properties.DES.substr(0,12) == 'Gemeindefrei' }
+});
+
 geojson.match({
 	data:match.loadCSV('../shared/Zensusdaten/demo_zip/Zensus_Demographie_V1_28Mai2013.csv'),
 	myField:'RAU_RS',
