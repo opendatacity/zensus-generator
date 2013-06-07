@@ -42,7 +42,13 @@ exports.loadGeoJSON = function (filename) {
 
 		if (convertShape) {
 			console.log('Konvertiere zu Shapefile');
-			exec('ogr2ogr -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson');
+			exec('ogr2ogr -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson', function (error, stdout, stderr) {
+				console.log('stdout: ' + stdout);
+				console.log('stderr: ' + stderr);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+			});
 		}
 	}
 
