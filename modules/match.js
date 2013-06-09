@@ -121,15 +121,15 @@ exports.loadGeoJSON = function (filename) {
 			console.log('   Generiere JSONs');
 
 			var json = {
-				x0:[],
-				y0:[],
-				width:[],
-				height:[],
-				xc:[],
-				yc:[],
-				title:[],
-				wiki:[],
-				value:[]
+				x0:     [],
+				y0:     [],
+				width:  [],
+				height: [],
+				xc:     [],
+				yc:     [],
+				sTitle: [],
+				sWiki:  [],
+				value:  []
 			};
 
 			regions.features.forEach(function (region, i) {
@@ -140,9 +140,9 @@ exports.loadGeoJSON = function (filename) {
 				json.height[i] = b.h.toFixed(0);
 				json.xc[i]     = (b.xc-b.x0).toFixed(0);
 				json.yc[i]     = (b.yc-b.y0).toFixed(0);
-				json.title[i]  = region.properties.GEN;
-				json.wiki[i]   = region.properties.wiki;
-				if (json.wiki[i] == json.title[i]) json.wiki[i] = 0;
+				json.sTitle[i] = region.properties.GEN;
+				json.sWiki[i]  = region.properties.wiki;
+				if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
 			});
 
 			options.fields.forEach(function (field) {
@@ -151,10 +151,11 @@ exports.loadGeoJSON = function (filename) {
 					if (value === undefined) {
 						value = '';
 					} else {
-						value = value.toFixed(3);
+						value = value.toFixed(2);
 					}
 					json.value[i] = value;
 				});
+				json.sDesc = field.title;
 
 				var jsonFile = options.jsonFile.replace(/\%/g, field.id);
 				ensureFolder(jsonFile);
@@ -162,7 +163,11 @@ exports.loadGeoJSON = function (filename) {
 				var result = [];
 				Object.keys(json).forEach(function (key) {
 					var values = JSON.stringify(json[key]);
-					if ((key != 'title') && (key != 'wiki')) values = values.replace(/\'|\"/g, '');
+					if (key[0] == 's') {
+						key = key.substr(1).toLowerCase();
+					} else {
+						values = values.replace(/\'|\"/g, '');
+					}
 					result.push('"'+key+'":'+values);
 				});
 				result = result.join('\n');
