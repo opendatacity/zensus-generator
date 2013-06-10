@@ -51,6 +51,28 @@ exports.loadGeoJSON = function (filename) {
 		}
 	}
 
+	me.logStatistics = function () {
+		var n = regions.features.length;
+		var fieldCount = {};
+		regions.features.forEach(function (feature) {
+			var p = feature.properties;
+			Object.keys(p).forEach(function (key) {
+				var value = p[key];
+				if (isFinite(value)) {
+					if (fieldCount[key] === undefined) fieldCount[key] = 0;
+					fieldCount[key]++;
+				}
+			})
+		})
+
+		var result = [];
+		Object.keys(fieldCount).forEach(function (key) {
+			result.push(key+'\t'+(fieldCount[key]/n));
+		});
+
+		console.log(result.join('\n'));
+	}
+
 	me.generateLokaler = function (options) {
 		console.log('   Erstelle Zensus-Auswertungen');
 
