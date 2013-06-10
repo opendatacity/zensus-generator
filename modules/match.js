@@ -18,8 +18,15 @@ exports.loadGeoJSON = function (filename) {
 			lut['_'+entry[options.foreignField]] = entry;
 		});
 
+		var idFunction;
+		if (Object.prototype.toString.call(options.myField) == '[object Function]') {
+			idFunction = options.myField;
+		} else {
+			idFunction = function (properties) { return properties[options.myField] };
+		}
+
 		regions.features.forEach(function (region) {
-			var id = region.properties[options.myField];
+			var id = idFunction(region.properties);
 			if (lut['_'+id] === undefined) {
 				if (!options.hideWarning || !options.hideWarning(region.properties)) {
 					console.warn('id nicht gefunden');
