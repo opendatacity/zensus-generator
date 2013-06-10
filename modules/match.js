@@ -28,7 +28,19 @@ exports.loadGeoJSON = function (filename) {
 			} else {
 				options.addFields.forEach(function (field) {
 					var newName = field.newName ? field.newName : field.name;
-					region.properties[newName] = field.convert(lut['_'+id][field.name]);
+					var value = field.convert(lut['_'+id][field.name]);
+					if (region.properties[newName] !== undefined) {
+						var abw = Math.abs(region.properties[newName]/value - 1);
+						if (abw > 0.002) {
+							console.warn('Wert gibt\'s schon!');
+							console.warn(region.properties);
+							console.warn(newName);
+							console.warn(region.properties[newName]);
+							console.warn(field.name);
+							console.warn(value);
+						}
+					}
+					region.properties[newName] = value;
 				})
 			}
 		})
