@@ -124,11 +124,11 @@ var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b
 
 geojson.generateLokaler({
 	nuances: 8*8,
-	jsonFile: './results/jsons/zensus%.json',
-	gradientFile: './results/skalen/skala-%.png',
-	//previewFile: './results/previews/zensus%.png',
-	mapnikFile: './results/xml/Zensus%.xml',
-	shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
+	previewFile: './results/previews/zensus%.png',
+	//jsonFile: './results/jsons/zensus%.json',
+	//gradientFile: './results/skalen/skala-%.png',
+	//mapnikFile: './results/xml/Zensus%.xml',
+	//shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
 	fields:[
 		{
 			id:'01',
@@ -152,19 +152,19 @@ geojson.generateLokaler({
 		},
 		{
 			id:'04',
-			title:'Anteil der Wohngebäude mit Baujahr vor 1919',
+			title:'Anteil der Whg. in Wohngebäude mit Baujahr vor 1919',
 			value:'WBAUJ1PC',
 			gradient:gWeissGruen
 		},
 		{
 			id:'05',
-			title:'Anteil der Wohngebäude mit Baujahr zwischen 1950-1969',
+			title:'Anteil der Whg. in Wohngebäude mit Baujahr zwischen 1950-1969',
 			value:'WBAUJ2PC',
 			gradient:gWeissGruen
 		},
 		{
 			id:'06',
-			title:'Anteil der Wohngebäude mit Baujahr nach 2000',
+			title:'Anteil der Whg. in Wohngebäude mit Baujahr nach 2000',
 			value:'WBAUJ3PC',
 			gradient:gWeissGruen
 		},
@@ -178,7 +178,7 @@ geojson.generateLokaler({
 			id:'08',
 			title:'Anteil der vom Eigentümer bewohnten Wohnungen',
 			value:'ETQ',
-			gradient:gWeissRot
+			gradient:gWeissBlau
 		},
 		{
 			id:'09',
@@ -240,7 +240,7 @@ geojson.generateLokaler({
 			id:'18',
 			title:'Anteil der Einfamilienhäuser an allen Wohngebäuden in %',
 			value:function (p) { return p.EFHPC },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'19',
@@ -258,25 +258,25 @@ geojson.generateLokaler({
 			id:'21',
 			title:'Anteil der Wohngebäude, die in Eigentumswohnungen aufgeteilt sind in %',
 			value:function (p) { return p.ETWPC },
-			gradient:gWeissBlau
+			gradient:gWeissGruenu
 		},
 		{
 			id:'22',
 			title:'Anteil der Wohngebäude, die Kommune oder kommunalen Wohnungsunternehmen gehören',
 			value:function (p) { return p.KOMPC },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'23',
 			title:'Anteil der Wohngebäude mit Fernheizung',
 			value:function (p) { return p.FHZPC },
-			gradient:gWeissBlau
+			gradient:gWeissRot
 		},
 		{
 			id:'24',
 			title:'Anteil der Wohngebäude mit Ofenheizung',
 			value:function (p) { return p.OFENPC },
-			gradient:gWeissBlau
+			gradient:gWeissRot
 		},
 
 
@@ -284,19 +284,19 @@ geojson.generateLokaler({
 			id:'25',
 			title:'Anteil der Wohngebäude, die vor 1919 gebaut wurden, in %',
 			value:function (p) { return p.BAUJ1PC },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'26',
 			title:'Anteil der Wohngebäude, die von 1950 bis 1969 gebaut wurden, in %',
 			value:function (p) { return p.BAUJ2PC },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'27',
 			title:'Anteil der Wohngebäude, die nach 2000 gebaut wurden, in %',
 			value:function (p) { return p.BAUJ3PC },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 
 
@@ -310,13 +310,13 @@ geojson.generateLokaler({
 			id:'29',
 			title:'Anteil der Wohnungen in Wohnheimen in %',
 			value:function (p) { return 100*p.WWOHEIM/p.WHG },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'30',
 			title:'Anteil der Wohnungen in bewohnten Unterkünften in %',
 			value:function (p) { return 100*p.WBEWUK/p.WHG },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 
 
@@ -325,69 +325,53 @@ geojson.generateLokaler({
 			id:'31',
 			title:'Durchschnittliche Wohnfläche pro Wohnung in m²',
 			value:function (p) { return p.MEANFL },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 		{
 			id:'32',
 			title:'Durchschnittliche Raumzahl pro Wohnung²',
 			value:function (p) { return p.MEANRZ },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
 		},
 
 
+	
 		{
 			id:'33',
-			title:'Durchschnittliche Anzahl der Wohnungen in Gebäude',
-			value:function (p) { return p.WWOGEB/p.GEB },
-			gradient:gWeissBlau
-		},
-		{
-			id:'34',
 			title:'Durchschnittliche Anzahl der Wohnungen in Wohngebäude',
 			value:function (p) { return p.WWOGEB/p.WOGEB },
-			gradient:gWeissBlau
+			gradient:gWeissGruen
+		},
+	
+
+
+		{
+			id:'34',
+			title:'Anteil der Wohnungen in Wohngebäuden, die in Eigentumswohnungen aufgeteilt sind, in %',
+			value:function (p) { return p.WETWPC },
+			gradient:gWeissGruen
 		},
 		{
 			id:'35',
-			title:'Durchschnittliche Anzahl der Wohnungen in Wohnheimen',
-			value:function (p) { return p.WWOHEIM/p.WOHEIM },
-			gradient:gWeissBlau
+			title:'Anteil der Wohnungen in Wohngebäuden, die Kommunen oder kommunalen Wohnungsunternehmen gehören, in %',
+			value:function (p) { return p.WKOMPC },
+			gradient:gWeissGruen
 		},
 		{
 			id:'36',
-			title:'Durchschnittliche Anzahl der Wohnungen in bewohnte Unterkünfte',
-			value:function (p) { return p.WBEWUK/p.BEWUK },
-			gradient:gWeissBlau
-		},
-
-
-		{
-			id:'37',
-			title:'Anteil der Wohnungen in Wohngebäuden, die in Eigentumswohnungen aufgeteilt sind, in %',
-			value:function (p) { return p.WETWPC },
-			gradient:gWeissBlau
-		},
-		{
-			id:'38',
-			title:'Anteil der Wohnungen in Wohngebäuden, die Kommunen oder kommunalen Wohnungsunternehmen gehören, in %',
-			value:function (p) { return p.WKOMPC },
-			gradient:gWeissBlau
-		},
-		{
-			id:'39',
 			title:'Anteil der Wohnungen mit Fernheizung in %',
 			value:function (p) { return p.WFHZPC },
-			gradient:gWeissBlau
+			gradient:gGelbRot
 		},
 		{
-			id:'40',
+			id:'37',
 			title:'Anteil der Wohnungen mit Ofenheizung in %',
 			value:function (p) { return p.WOFENPC },
-			gradient:gWeissBlau
+			gradient:gGelbRot
 		},
 
 		{
-			id:'41',
+			id:'38',
 			title:'Durchschnittliche Wohnfläche pro Einwohner in m²',
 			value:function (p) { return p.MEANFL*p.WWOGEB/p.EWZ },
 			gradient:gWeissBlau
@@ -395,4 +379,4 @@ geojson.generateLokaler({
 	]
 });
 
-//geojson.saveGeo('./results/shape/gemeinden', false);
+geojson.saveGeo('./results/shape/gemeinden', true);
