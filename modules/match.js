@@ -54,8 +54,9 @@ exports.loadGeoJSON = function (filename) {
 	}
 
 	me.saveGeo = function (filename, convertShape) {
-		var json = JSON.stringify(regions/*, null, '\t'*/);
 		console.log('   Erstelle GeoJSON');
+		var json = JSON.stringify(regions/*, null, '\t'*/);
+		
 		console.log('      Speichere GeoJSON');
 		ensureFolder(filename);
 		fs.writeFileSync(filename+'.geojson', json, 'utf8');	
