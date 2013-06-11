@@ -224,39 +224,49 @@ exports.loadGeoJSON = function (filename) {
 
 		if (options.previewFile) {
 			console.log('      Generiere Previews');
-			options.fields.forEach(function (field) {
-				var svg = [
-					'<?xml version="1.0" encoding="utf-8"?>',
-					'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-					'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1600px" xml:space="preserve">'
-				];
-				regions.features.forEach(function (region) {
-					var color = field.colors[region.properties['COLOR'+field.id]];
 
-					var path = [];
-					switch (region.geometry.type) {
-						case 'Polygon':
-							path = GeoJSON2SVG(region.geometry.coordinates, 1);
-						break;
-						case 'MultiPolygon':
-							path = GeoJSON2SVG(region.geometry.coordinates, 2);
-						break;
-						default:
-							console.log(region.geometry);
-							process.exit();
-						break;
-					}
-					svg.push('<path d="'+path+'" fill="#'+color+'" stroke-width="0.2" stroke="#000"/>');
-				});
-				svg.push('</svg>');
-				svg.join('\n');
+			var svg = [
+				'<?xml version="1.0" encoding="utf-8"?>',
+				'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+				'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1600px" xml:space="preserve">'
+			];
+			regions.features.forEach(function (region) {
+				var path = [];
+				switch (region.geometry.type) {
+					case 'Polygon':
+						path = GeoJSON2SVG(region.geometry.coordinates, 1);
+					break;
+					case 'MultiPolygon':
+						path = GeoJSON2SVG(region.geometry.coordinates, 2);
+					break;
+					default:
+						console.log(region.geometry);
+						process.exit();
+					break;
+				}
+				svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.2" stroke="#000"/>');
+			});
+			svg.push('</svg>');
+			svg = svg.join('\n');
+			svg = svg.split('%%%');
+
+			options.fields.forEach(function (field) {
+
+				regions.features.forEach(function (region, index) {
+					svg[index*2+1] = field.colors[region.properties['COLOR'+field.id]];
+				})
 
 				var previewFile = options.previewFile.replace(/\%/g, field.id);
-				ensureFolder(previewFile);
-				fs.writeFileSync(previewFile+'.svg', svg.join('\n'), 'utf8');
+				previewFile = previewFile.replace(/\.[^\.]+$/, '.svg');
 
-				exec('convert -background white -density 36 -quality 95 '+previewFile+'.svg '+previewFile+' && rm '+previewFile+'.svg');
+				ensureFolder(previewFile);
+
+				fs.writeFileSync(previewFile, svg.join(''), 'utf8');
 			})
+			
+			console.log('      Konvertiere Previews');
+			var dir = path.dirname(options.previewFile);
+			exec('mogrify -background white -density 36 -format png -quality 95 '+dir+'/*.svg && rm '+dir+'/*.svg')
 		}
 
 
