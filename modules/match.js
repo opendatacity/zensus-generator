@@ -29,7 +29,7 @@ exports.loadGeoJSON = function (filename) {
 			var id = idFunction(region.properties);
 			if (lut['_'+id] === undefined) {
 				if (!options.hideWarning || !options.hideWarning(region.properties)) {
-					console.warn('id nicht gefunden');
+					console.warn('id "'+id+'" nicht gefunden');
 					console.warn(region.properties);
 				}
 			} else {
@@ -353,7 +353,6 @@ exports.loadCSV = function (filename) {
 	console.log('   Lade CSV "'+filename+'"');
 	var data = fs.readFileSync(filename, 'utf8');
 
-	console.log('      Lese CSV');
 	data = data.split('\r\n');
 
 	while (data[data.length-1].replace(/^\s+|\s+$/,'') == '') data.pop();
