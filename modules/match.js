@@ -296,7 +296,7 @@ exports.loadGeoJSON = function (filename) {
 		}
 
 		if (options.gradientFile) {
-			console.log('      Generiere Gradient');
+			console.log('      Generiere Gradients');
 			options.fields.forEach(function (field) {
 				var stops = [];
 				for (var i = 1; i < field.gradient.length; i++) {
@@ -312,7 +312,6 @@ exports.loadGeoJSON = function (filename) {
 				for (var i = mini+1; i < maxi; i++) {
 					labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*field.step).toFixed(digits)+'</text>');
 				}
-
 
 				var svg = [
 					'<?xml version="1.0" encoding="utf-8"?>',
@@ -330,11 +329,17 @@ exports.loadGeoJSON = function (filename) {
 				];
 
 				var gradientFile = options.gradientFile.replace(/\%/g, field.id);
-				ensureFolder(gradientFile);
-				fs.writeFileSync(gradientFile+'.svg', svg.join('\n'), 'utf8');
+				gradientFile = gradientFile.replace(/\.[^\.]+$/, '.svg');
 
-				exec('convert -background white -quality 95 '+gradientFile+'.svg '+gradientFile+' && rm '+gradientFile+'.svg');
+				ensureFolder(gradientFile);
+
+				fs.writeFileSync(gradientFile, svg.join('\n'), 'utf8');
 			});
+
+
+			console.log('      Konvertiere Gradients');
+			var dir = path.dirname(options.gradientFile);
+			exec('mogrify -background white -format png -quality 95 '+dir+'/*.svg && rm '+dir+'/*.svg')
 		}
 	}
 
