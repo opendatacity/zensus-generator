@@ -265,8 +265,10 @@ exports.loadGeoJSON = function (filename) {
 			})
 			
 			console.log('      Konvertiere Previews');
-			var dir = path.dirname(options.previewFile);
-			exec('mogrify -background white -density 36 -format png -quality 95 '+dir+'/*.svg && rm '+dir+'/*.svg')
+
+			var previewFiles = options.previewFile.replace(/\%/g, '*');
+			previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
+			exec('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
 		}
 
 
@@ -338,8 +340,9 @@ exports.loadGeoJSON = function (filename) {
 
 
 			console.log('      Konvertiere Gradients');
-			var dir = path.dirname(options.gradientFile);
-			exec('mogrify -background white -format png -quality 95 '+dir+'/*.svg && rm '+dir+'/*.svg')
+			var gradientFiles = options.gradientFile.replace(/\%/g, '*');
+			gradientFiles = gradientFiles.replace(/\.[^\.]+$/, '.svg');
+			exec('mogrify -background white -format png -quality 95 '+gradientFiles+' && rm '+gradientFiles);
 		}
 	}
 
