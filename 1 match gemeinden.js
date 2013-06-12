@@ -258,7 +258,7 @@ geojson.generateLokaler({
 			id:'21',
 			title:'Anteil der Wohngebäude, die in Eigentumswohnungen aufgeteilt sind in %',
 			value:function (p) { return p.ETWPC },
-			gradient:gWeissGruenu
+			gradient:gWeissGruen
 		},
 		{
 			id:'22',
