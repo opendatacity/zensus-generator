@@ -229,7 +229,7 @@ exports.loadGeoJSON = function (filename) {
 					}
 					result.push('"'+key+'":'+values);
 				});
-				result = result.join('\n');
+				result = result.join(',\n');
 				result = '{\n'+result+'\n}';
 				result = result.replace(/\,null\,/g, ',');
 				result = result.replace(/\,null\,/g, ',');
