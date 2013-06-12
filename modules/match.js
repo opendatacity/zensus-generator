@@ -56,7 +56,7 @@ exports.loadGeoJSON = function (filename) {
 	me.saveGeo = function (filename, convertShape) {
 		console.log('   Erstelle GeoJSON');
 		var json = JSON.stringify(regions/*, null, '\t'*/);
-		
+
 		console.log('      Speichere GeoJSON');
 		ensureFolder(filename);
 		fs.writeFileSync(filename+'.geojson', json, 'utf8');	
@@ -105,6 +105,21 @@ exports.loadGeoJSON = function (filename) {
 			allowedSteps.push(f*3);
 			allowedSteps.push(f*5);
 		}
+
+		var id, minLength;
+		console.log('      Generiere Auto-Ids');
+		options.fields.forEach(function (field) {
+			if (field.id) {
+				id = parseInt(field.id, 10);
+				minLength = field.id.length;
+			} else {
+				id++;
+				field.id = id.toFixed(0);
+				if (field.id.length < minLength) {
+					field.id = ('0000000000'+field.id).substr(10+field.id.length-minLength, minLength);
+				}
+			}
+		});
 
 		console.log('      Berechne Werte');
 		options.fields.forEach(function (field) {

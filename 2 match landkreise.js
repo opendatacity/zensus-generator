@@ -378,37 +378,31 @@ geojson.generateLokaler({
 			gradient:gWeissBlau
 		},
 		{
-			id:'102',
 			title:'Bevölkerungsanteil mit christlichem Glauben in %',
 			value:function (p) { return 100*(p.CHRIST)/(p.BEV-p.OANGABE) },
 			gradient:gWeissBlau
 		},
 		{
-			id:'103',
 			title:'Bevölkerungsanteil mit katholischem Glauben in %',
 			value:function (p) { return 100*(p.RKATH)/(p.BEV-p.OANGABE) },
 			gradient:gWeissBlau
 		},
 		{
-			id:'104',
 			title:'Bevölkerungsanteil mit evangelischem Glauben in %',
 			value:function (p) { return 100*(p.EVANG)/(p.BEV-p.OANGABE) },
 			gradient:gWeissBlau
 		},
 		{
-			id:'105',
 			title:'Bevölkerungsanteil mit sonstigem Glauben in %',
 			value:function (p) { return 100*(p.SONST)/(p.BEV-p.OANGABE) },
 			gradient:gWeissBlau
 		},
 		{
-			id:'106',
 			title:'Bevölkerungsanteil ohne Religion oder Glaubensrichtung in %',
 			value:function (p) { return 100*(p.KEINE)/(p.BEV-p.OANGABE) },
 			gradient:gWeissBlau
 		},
 		{
-			id:'107',
 			title:'Bevölkerungsanteil ohne Angabe des Glaubens in %',
 			value:function (p) { return 100*(p.OANGABE)/(p.BEV) },
 			gradient:gWeissBlau
@@ -417,7 +411,6 @@ geojson.generateLokaler({
 
 
 		{
-			id:'108',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung in %',
 			value:function (p) { return 100*(p.Zensus_EWZ/p.BFS_EWZ - 1) },
 			gradient:gViolettGruen,
@@ -425,7 +418,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'109',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Männer) in %',
 			value:function (p) { return 100*(p.Zensus_EW_M/p.BFS_EW_M - 1) },
 			gradient:gViolettGruen,
@@ -433,7 +425,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'110',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Frauen) in %',
 			value:function (p) { return 100*(p.Zensus_EW_W/p.BFS_EW_W - 1) },
 			gradient:gViolettGruen,
@@ -441,7 +432,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'111',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 2011 - 1994) in %',
 			value:function (p) { return 100*(p.Zensus_gebjahr_1/p.BFS_gebjahr_1 - 1) },
 			gradient:gViolettGruen,
@@ -449,7 +439,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'112',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1993 - 1982) in %',
 			value:function (p) { return 100*(p.Zensus_gebjahr_2/p.BFS_gebjahr_2 - 1) },
 			gradient:gViolettGruen,
@@ -457,7 +446,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'113',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1981 - 1962) in %',
 			value:function (p) { return 100*(p.Zensus_gebjahr_3/p.BFS_gebjahr_3 - 1) },
 			gradient:gViolettGruen,
@@ -465,7 +453,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'114',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1961 - 1947) in %',
 			value:function (p) { return 100*(p.Zensus_gebjahr_4/p.BFS_gebjahr_4 - 1) },
 			gradient:gViolettGruen,
@@ -473,7 +460,6 @@ geojson.generateLokaler({
 			max:  10
 		},
 		{
-			id:'115',
 			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1946 und früher) in %',
 			value:function (p) { return 100*(p.Zensus_gebjahr_5/p.BFS_gebjahr_5 - 1) },
 			gradient:gViolettGruen,
@@ -484,19 +470,16 @@ geojson.generateLokaler({
 /*
 
 		{
-			id:'116',
 			title:'Anteil der Erwerbsfähigen an der ganzen Bevölkerung in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der weiblichen Erwerbsfähigen an der ganzen Bevölkerung in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der männlichen Erwerbsfähigen an der ganzen Bevölkerung in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
@@ -505,31 +488,26 @@ geojson.generateLokaler({
 
 
 		{
-			id:'116',
 			title:'Anteil der Erwerbstätigen an der Bevölkerung in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der Erwerbstätigen an den Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der weiblichen Erwerbstätigen an allen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der weiblichen Erwerbstätigen an den weiblichen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der männlichen Erwerbstätigen an den männlichen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
@@ -538,31 +516,26 @@ geojson.generateLokaler({
 
 
 		{
-			id:'116',
 			title:'Anteil der Erwerbslosen an der Bevölkerung in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der Erwerbslosen an den Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der weiblichen Erwerbslosen an allen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der weiblichen Erwerbslosen an den weiblichen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der männlichen Erwerbslosen an den männlichen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
@@ -571,19 +544,16 @@ geojson.generateLokaler({
 
 
 		{
-			id:'116',
 			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
 		},
 		{
-			id:'116',
 			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
 			value:function (p) { return 100*p.ERWERBST/p.BEV },
 			gradient:gWeissBlau
