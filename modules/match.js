@@ -63,7 +63,7 @@ exports.loadGeoJSON = function (filename) {
 
 		if (convertShape) {
 			console.log('      Konvertiere zu Shapefile');
-			exec('ogr2ogr -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson', function (error, stdout, stderr) {
+			exec('/Library/Frameworks/GDAL.framework/Programs/ogr2ogr -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson', function (error, stdout, stderr) {
 				if (stdout) console.log('stdout: ' + stdout);
 				if (stderr) console.log('stderr: ' + stderr);
 				if (error)  console.log('exec error: ' + error);
