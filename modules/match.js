@@ -244,7 +244,8 @@ exports.loadGeoJSON = function (filename) {
 			var svg = [
 				'<?xml version="1.0" encoding="utf-8"?>',
 				'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-				'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1600px" xml:space="preserve">'
+				'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1650px" xml:space="preserve">',
+				'<text x="600" y="30" style="font-family:Verdana; font-size:20;" text-anchor="middle">%%%text%%%</text>'
 			];
 			regions.features.forEach(function (region) {
 				var path = [];
@@ -267,9 +268,9 @@ exports.loadGeoJSON = function (filename) {
 			svg = svg.split('%%%');
 
 			options.fields.forEach(function (field) {
-
+				svg[1] = field.title;
 				regions.features.forEach(function (region, index) {
-					svg[index*2+1] = field.colors[region.properties['COLOR'+field.id]];
+					svg[index*2+3] = field.colors[region.properties['COLOR'+field.id]];
 				})
 
 				var previewFile = options.previewFile.replace(/\%/g, field.id);
@@ -436,7 +437,7 @@ var GeoJSON2SVG = function (points, depth) {
 		var lastPoint = '';
 		var result = points.map(function (point) {
 			var x = 200*( point[0] -  5.5)*0.616;
-			var y = 200*(-point[1] + 55.1);
+			var y = 200*(-point[1] + 55.1)+50;
 			return x.toFixed(0)+','+y.toFixed(0);
 		});
 
