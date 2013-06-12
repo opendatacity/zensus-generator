@@ -186,7 +186,8 @@ exports.loadGeoJSON = function (filename) {
 				yc:     [],
 				sTitle: [],
 				sWiki:  [],
-				value:  []
+				value:  [],
+				bev:    []
 			};
 
 			regions.features.forEach(function (region, i) {
@@ -197,6 +198,7 @@ exports.loadGeoJSON = function (filename) {
 				json.height[i] = b.h.toFixed(0);
 				json.xc[i]     = (b.xc-b.x0).toFixed(0);
 				json.yc[i]     = (b.yc-b.y0).toFixed(0);
+				json.bev[i]    = region.properties.EWZ;
 				json.sTitle[i] = region.properties.GEN;
 				json.sWiki[i]  = region.properties.wiki;
 				if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
