@@ -251,8 +251,8 @@ exports.loadGeoJSON = function (filename) {
 		var svg = [
 			'<?xml version="1.0" encoding="utf-8"?>',
 			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-			'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="'+(600*scale)+'px" height="'+(825*scale)+'px" xml:space="preserve">',
-			'<text x="600" y="30" style="font-family:Verdana; font-size:20;" text-anchor="middle">%%%text%%%</text>'
+			'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="600px" height="825px" xml:space="preserve">',
+			'<text x="300" y="15" style="font-family:Verdana; font-size:10;" text-anchor="middle">%%%text%%%</text>'
 		];
 		regions.features.forEach(function (region) {
 			var path = [];
@@ -292,8 +292,8 @@ exports.loadGeoJSON = function (filename) {
 
 		var previewFiles = previewFilename.replace(/\%/g, '*');
 		previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
-		//exec('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
-		console.log('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
+		
+		exec('mogrify -background white -density '+(72/scale)+' -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
 	}
 
 
