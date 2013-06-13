@@ -337,7 +337,10 @@ geojson.setFields(8*8, [
 
 
 geojson.generateJSONs('./results/jsons/zensus%.json');
-geojson.generatePreviews('./results/previews/zensus%.png');
+
+geojson.generatePreviews('./results/previews/zensus%.png', 1);
+geojson.generatePreviews('./results/huge/zensus%.png', 16);
+
 geojson.generateGradients('./results/skalen/skala-%.png'),
 geojson.generateMapniks('./results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp');
 
