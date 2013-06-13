@@ -120,263 +120,260 @@ var gWeissGruen =   ['FFFFFF','f7fcf5','e5f5e0','c7e9c0','a1d99b','74c476','41ab
 var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b2c','cb181d','a50f15','67000d'];
 
 
+geojson.setFields(8*8, [
+	{
+		id:'001',
+		title:'Altersverteilung - Anteil der 65+ in %',
+		value:function (p) { return 100*p.ALTER_5/p.EWZ },
+		gradient:gGelbRot
+	},
+	{
+		id:'002',
+		title:'Frauenanteil - Anteil in %',
+		value:function (p) { return 100*p.EW_W/p.EWZ },
+		gradient:gViolettGruen,
+		min: 45,
+		max: 55
+	},
+	{
+		id:'003',
+		title:'Ausländeranteil - Anteil in %',
+		value:function (p) { return 100*p.EW_A/p.EWZ },
+		gradient:gWeissBlau
+	},
+	{
+		id:'004',
+		title:'Anteil der Whg. in Wohngebäude mit Baujahr vor 1919',
+		value:'WBAUJ1PC',
+		gradient:gWeissGruen
+	},
+	{
+		id:'005',
+		title:'Anteil der Whg. in Wohngebäude mit Baujahr zwischen 1950-1969',
+		value:'WBAUJ2PC',
+		gradient:gWeissGruen
+	},
+	{
+		id:'006',
+		title:'Anteil der Whg. in Wohngebäude mit Baujahr nach 2000',
+		value:'WBAUJ3PC',
+		gradient:gWeissGruen
+	},
+	{
+		id:'007',
+		title:'Anteil der leer stehenden Wohnungen',
+		value:'LEQ',
+		gradient:gWeissRot
+	},
+	{
+		id:'008',
+		title:'Anteil der vom Eigentümer bewohnten Wohnungen',
+		value:'ETQ',
+		gradient:gWeissBlau
+	},
+	{
+		id:'009',
+		title:'Anteil der Wohnungen ohne Bad und WC',
+		value:'WOWCPC',
+		gradient:gWeissRot
+	},
+	{
+		id:'010',
+		title:'Altersverteilung - Anteil der unter 18-Jährigen in %',
+		value:function (p) { return 100*p.ALTER_1/p.EWZ },
+		gradient:gGelbRot
+	},
+	{
+		id:'011',
+		title:'Altersverteilung - Anteil der 18 bis 29-Jährigen in %',
+		value:function (p) { return 100*p.ALTER_2/p.EWZ },
+		gradient:gGelbRot
+	},
+	{
+		id:'012',
+		title:'Altersverteilung - Anteil der 30 bis 49-Jährigen in %',
+		value:function (p) { return 100*p.ALTER_3/p.EWZ },
+		gradient:gGelbRot
+	},
+	{
+		id:'013',
+		title:'Altersverteilung - Anteil der 50 bis 64-Jährigen in %',
+		value:function (p) { return 100*p.ALTER_4/p.EWZ },
+		gradient:gGelbRot
+	},
 
 
-geojson.generateLokaler({
-	nuances: 8*8,
-	previewFile: './results/previews/zensus%.png',
-	//jsonFile: './results/jsons/zensus%.json',
-	//gradientFile: './results/skalen/skala-%.png',
-	//mapnikFile: './results/xml/Zensus%.xml',
-	//shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
-	fields:[
-		{
-			id:'001',
-			title:'Altersverteilung - Anteil der 65+ in %',
-			value:function (p) { return 100*p.ALTER_5/p.EWZ },
-			gradient:gGelbRot
-		},
-		{
-			id:'002',
-			title:'Frauenanteil - Anteil in %',
-			value:function (p) { return 100*p.EW_W/p.EWZ },
-			gradient:gViolettGruen,
-			min: 45,
-			max: 55
-		},
-		{
-			id:'003',
-			title:'Ausländeranteil - Anteil in %',
-			value:function (p) { return 100*p.EW_A/p.EWZ },
-			gradient:gWeissBlau
-		},
-		{
-			id:'004',
-			title:'Anteil der Whg. in Wohngebäude mit Baujahr vor 1919',
-			value:'WBAUJ1PC',
-			gradient:gWeissGruen
-		},
-		{
-			id:'005',
-			title:'Anteil der Whg. in Wohngebäude mit Baujahr zwischen 1950-1969',
-			value:'WBAUJ2PC',
-			gradient:gWeissGruen
-		},
-		{
-			id:'006',
-			title:'Anteil der Whg. in Wohngebäude mit Baujahr nach 2000',
-			value:'WBAUJ3PC',
-			gradient:gWeissGruen
-		},
-		{
-			id:'007',
-			title:'Anteil der leer stehenden Wohnungen',
-			value:'LEQ',
-			gradient:gWeissRot
-		},
-		{
-			id:'008',
-			title:'Anteil der vom Eigentümer bewohnten Wohnungen',
-			value:'ETQ',
-			gradient:gWeissBlau
-		},
-		{
-			id:'009',
-			title:'Anteil der Wohnungen ohne Bad und WC',
-			value:'WOWCPC',
-			gradient:gWeissRot
-		},
-		{
-			id:'010',
-			title:'Altersverteilung - Anteil der unter 18-Jährigen in %',
-			value:function (p) { return 100*p.ALTER_1/p.EWZ },
-			gradient:gGelbRot
-		},
-		{
-			id:'011',
-			title:'Altersverteilung - Anteil der 18 bis 29-Jährigen in %',
-			value:function (p) { return 100*p.ALTER_2/p.EWZ },
-			gradient:gGelbRot
-		},
-		{
-			id:'012',
-			title:'Altersverteilung - Anteil der 30 bis 49-Jährigen in %',
-			value:function (p) { return 100*p.ALTER_3/p.EWZ },
-			gradient:gGelbRot
-		},
-		{
-			id:'013',
-			title:'Altersverteilung - Anteil der 50 bis 64-Jährigen in %',
-			value:function (p) { return 100*p.ALTER_4/p.EWZ },
-			gradient:gGelbRot
-		},
+	{
+		id:'014',
+		title:'Einwohner pro Gebäude',
+		value:function (p) { return p.EWZ/p.GEB },
+		gradient:gWeissBlau
+	},
+	{
+		id:'015',
+		title:'Einwohner pro Wohngebäude',
+		value:function (p) { return p.EWZ/p.WOGEB },
+		gradient:gWeissBlau
+	},
+	{
+		id:'016',
+		title:'Einwohner pro Wohnheim',
+		value:function (p) { return p.EWZ/p.WOHEIM },
+		gradient:gWeissBlau
+	},
+	{
+		id:'017',
+		title:'Einwohner pro Einfamilienhäuser',
+		value:function (p) { return p.EWZ/p.EFH },
+		gradient:gWeissBlau
+	},
+	{
+		id:'018',
+		title:'Anteil der Einfamilienhäuser an allen Wohngebäuden in %',
+		value:function (p) { return p.EFHPC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'019',
+		title:'Einwohner pro freistehender Einfamilienhäuser',
+		value:function (p) { return p.EWZ/p.FREFH },
+		gradient:gWeissBlau
+	},
+	{
+		id:'020',
+		title:'Anteil der freistehenden Einfamilienhäuser an allen Wohngebäuden in %',
+		value:function (p) { return p.FREFHPC },
+		gradient:gWeissBlau
+	},
+	{
+		id:'021',
+		title:'Anteil der Wohngebäude, die in Eigentumswohnungen aufgeteilt sind in %',
+		value:function (p) { return p.ETWPC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'022',
+		title:'Anteil der Wohngebäude, die Kommune oder kommunalen Wohnungsunternehmen gehören',
+		value:function (p) { return p.KOMPC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'023',
+		title:'Anteil der Wohngebäude mit Fernheizung',
+		value:function (p) { return p.FHZPC },
+		gradient:gWeissRot
+	},
+	{
+		id:'024',
+		title:'Anteil der Wohngebäude mit Ofenheizung',
+		value:function (p) { return p.OFENPC },
+		gradient:gWeissRot
+	},
 
 
-		{
-			id:'014',
-			title:'Einwohner pro Gebäude',
-			value:function (p) { return p.EWZ/p.GEB },
-			gradient:gWeissBlau
-		},
-		{
-			id:'015',
-			title:'Einwohner pro Wohngebäude',
-			value:function (p) { return p.EWZ/p.WOGEB },
-			gradient:gWeissBlau
-		},
-		{
-			id:'016',
-			title:'Einwohner pro Wohnheim',
-			value:function (p) { return p.EWZ/p.WOHEIM },
-			gradient:gWeissBlau
-		},
-		{
-			id:'017',
-			title:'Einwohner pro Einfamilienhäuser',
-			value:function (p) { return p.EWZ/p.EFH },
-			gradient:gWeissBlau
-		},
-		{
-			id:'018',
-			title:'Anteil der Einfamilienhäuser an allen Wohngebäuden in %',
-			value:function (p) { return p.EFHPC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'019',
-			title:'Einwohner pro freistehender Einfamilienhäuser',
-			value:function (p) { return p.EWZ/p.FREFH },
-			gradient:gWeissBlau
-		},
-		{
-			id:'020',
-			title:'Anteil der freistehenden Einfamilienhäuser an allen Wohngebäuden in %',
-			value:function (p) { return p.FREFHPC },
-			gradient:gWeissBlau
-		},
-		{
-			id:'021',
-			title:'Anteil der Wohngebäude, die in Eigentumswohnungen aufgeteilt sind in %',
-			value:function (p) { return p.ETWPC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'022',
-			title:'Anteil der Wohngebäude, die Kommune oder kommunalen Wohnungsunternehmen gehören',
-			value:function (p) { return p.KOMPC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'023',
-			title:'Anteil der Wohngebäude mit Fernheizung',
-			value:function (p) { return p.FHZPC },
-			gradient:gWeissRot
-		},
-		{
-			id:'024',
-			title:'Anteil der Wohngebäude mit Ofenheizung',
-			value:function (p) { return p.OFENPC },
-			gradient:gWeissRot
-		},
+	{
+		id:'025',
+		title:'Anteil der Wohngebäude, die vor 1919 gebaut wurden, in %',
+		value:function (p) { return p.BAUJ1PC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'026',
+		title:'Anteil der Wohngebäude, die von 1950 bis 1969 gebaut wurden, in %',
+		value:function (p) { return p.BAUJ2PC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'027',
+		title:'Anteil der Wohngebäude, die nach 2000 gebaut wurden, in %',
+		value:function (p) { return p.BAUJ3PC },
+		gradient:gWeissGruen
+	},
 
 
-		{
-			id:'025',
-			title:'Anteil der Wohngebäude, die vor 1919 gebaut wurden, in %',
-			value:function (p) { return p.BAUJ1PC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'026',
-			title:'Anteil der Wohngebäude, die von 1950 bis 1969 gebaut wurden, in %',
-			value:function (p) { return p.BAUJ2PC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'027',
-			title:'Anteil der Wohngebäude, die nach 2000 gebaut wurden, in %',
-			value:function (p) { return p.BAUJ3PC },
-			gradient:gWeissGruen
-		},
-
-
-		{
-			id:'028',
-			title:'Einwohner pro Wohnung',
-			value:function (p) { return p.EWZ/p.WHG },
-			gradient:gWeissBlau
-		},
-		{
-			id:'029',
-			title:'Anteil der Wohnungen in Wohnheimen in %',
-			value:function (p) { return 100*p.WWOHEIM/p.WHG },
-			gradient:gWeissGruen
-		},
-		{
-			id:'030',
-			title:'Anteil der Wohnungen in bewohnten Unterkünften in %',
-			value:function (p) { return 100*p.WBEWUK/p.WHG },
-			gradient:gWeissGruen
-		},
+	{
+		id:'028',
+		title:'Einwohner pro Wohnung',
+		value:function (p) { return p.EWZ/p.WHG },
+		gradient:gWeissBlau
+	},
+	{
+		id:'029',
+		title:'Anteil der Wohnungen in Wohnheimen in %',
+		value:function (p) { return 100*p.WWOHEIM/p.WHG },
+		gradient:gWeissGruen
+	},
+	{
+		id:'030',
+		title:'Anteil der Wohnungen in bewohnten Unterkünften in %',
+		value:function (p) { return 100*p.WBEWUK/p.WHG },
+		gradient:gWeissGruen
+	},
 
 
 
-		{
-			id:'031',
-			title:'Durchschnittliche Wohnfläche pro Wohnung in m²',
-			value:function (p) { return p.MEANFL },
-			gradient:gWeissGruen
-		},
-		{
-			id:'032',
-			title:'Durchschnittliche Raumzahl pro Wohnung²',
-			value:function (p) { return p.MEANRZ },
-			gradient:gWeissGruen
-		},
+	{
+		id:'031',
+		title:'Durchschnittliche Wohnfläche pro Wohnung in m²',
+		value:function (p) { return p.MEANFL },
+		gradient:gWeissGruen
+	},
+	{
+		id:'032',
+		title:'Durchschnittliche Raumzahl pro Wohnung²',
+		value:function (p) { return p.MEANRZ },
+		gradient:gWeissGruen
+	},
 
 
-	
-		{
-			id:'033',
-			title:'Durchschnittliche Anzahl der Wohnungen in Wohngebäude',
-			value:function (p) { return p.WWOGEB/p.WOGEB },
-			gradient:gWeissGruen
-		},
-	
+
+	{
+		id:'033',
+		title:'Durchschnittliche Anzahl der Wohnungen in Wohngebäude',
+		value:function (p) { return p.WWOGEB/p.WOGEB },
+		gradient:gWeissGruen
+	},
 
 
-		{
-			id:'034',
-			title:'Anteil der Wohnungen in Wohngebäuden, die in Eigentumswohnungen aufgeteilt sind, in %',
-			value:function (p) { return p.WETWPC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'035',
-			title:'Anteil der Wohnungen in Wohngebäuden, die Kommunen oder kommunalen Wohnungsunternehmen gehören, in %',
-			value:function (p) { return p.WKOMPC },
-			gradient:gWeissGruen
-		},
-		{
-			id:'036',
-			title:'Anteil der Wohnungen mit Fernheizung in %',
-			value:function (p) { return p.WFHZPC },
-			gradient:gGelbRot
-		},
-		{
-			id:'037',
-			title:'Anteil der Wohnungen mit Ofenheizung in %',
-			value:function (p) { return p.WOFENPC },
-			gradient:gGelbRot
-		},
 
-		{
-			id:'038',
-			title:'Durchschnittliche Wohnfläche pro Einwohner in m²',
-			value:function (p) { return p.MEANFL*p.WWOGEB/p.EWZ },
-			gradient:gWeissBlau
-		}
-	]
-});
+	{
+		id:'034',
+		title:'Anteil der Wohnungen in Wohngebäuden, die in Eigentumswohnungen aufgeteilt sind, in %',
+		value:function (p) { return p.WETWPC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'035',
+		title:'Anteil der Wohnungen in Wohngebäuden, die Kommunen oder kommunalen Wohnungsunternehmen gehören, in %',
+		value:function (p) { return p.WKOMPC },
+		gradient:gWeissGruen
+	},
+	{
+		id:'036',
+		title:'Anteil der Wohnungen mit Fernheizung in %',
+		value:function (p) { return p.WFHZPC },
+		gradient:gGelbRot
+	},
+	{
+		id:'037',
+		title:'Anteil der Wohnungen mit Ofenheizung in %',
+		value:function (p) { return p.WOFENPC },
+		gradient:gGelbRot
+	},
 
-geojson.saveGeo('./results/shape/gemeinden', true);
+	{
+		id:'038',
+		title:'Durchschnittliche Wohnfläche pro Einwohner in m²',
+		value:function (p) { return p.MEANFL*p.WWOGEB/p.EWZ },
+		gradient:gWeissBlau
+	}
+]);
+
+
+geojson.generateJSONs('./results/jsons/zensus%.json');
+geojson.generatePreviews('./results/previews/zensus%.png');
+geojson.generateGradients('./results/skalen/skala-%.png'),
+geojson.generateMapniks('./results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp');
+
+
+//geojson.saveGeo('./results/shape/gemeinden', true);

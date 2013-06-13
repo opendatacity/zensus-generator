@@ -3,6 +3,8 @@ var exec = require('child_process').exec;
 
 exports.loadGeoJSON = function (filename) {
 	var me = this;
+
+	me.fields;
 	
 	console.log('   Lade GeoJSON "'+filename+'"');
 	var regions = fs.readFileSync(filename, 'utf8');
@@ -93,8 +95,10 @@ exports.loadGeoJSON = function (filename) {
 		console.log(result.join('\n'));
 	}
 
-	me.generateLokaler = function (options) {
+	me.setFields = function (nuances, fields) {
 		console.log('   Erstelle Zensus-Auswertungen');
+		me.fields = fields;
+		me.nuances = nuances;
 
 		// Welche Zahlen sind für die Skalierung erlaubt?
 		var allowedSteps = [];
@@ -108,7 +112,7 @@ exports.loadGeoJSON = function (filename) {
 
 		var id, minLength;
 		console.log('      Generiere Auto-Ids');
-		options.fields.forEach(function (field) {
+		me.fields.forEach(function (field) {
 			if (field.id) {
 				id = parseInt(field.id, 10);
 				minLength = field.id.length;
@@ -122,7 +126,7 @@ exports.loadGeoJSON = function (filename) {
 		});
 
 		console.log('      Berechne Werte');
-		options.fields.forEach(function (field) {
+		me.fields.forEach(function (field) {
 
 			var values = [];
 			var isFunction = Object.prototype.toString.call(field.value) == '[object Function]';
@@ -162,207 +166,208 @@ exports.loadGeoJSON = function (filename) {
 			// Berechne Farben
 			regions.features.forEach(function (region) {
 				var value = region.properties['ZENSUS'+field.id];
-				var color = Math.round(options.nuances*(value-roundMin)/(roundMax-roundMin));
+				var color = Math.round(me.nuances*(value-roundMin)/(roundMax-roundMin));
 				if (color < 0) color = 0;
-				if (color > options.nuances) color = options.nuances;
+				if (color > me.nuances) color = me.nuances;
 				region.properties['COLOR'+field.id] = (value === undefined) ? 0 : color+1;
 			});
 
 			field.colors = [field.gradient[0]];
-			for (var i = 0; i <= options.nuances; i++) {
-				field.colors[i+1] = interpolateColor(field.gradient, i/options.nuances);
+			for (var i = 0; i <= me.nuances; i++) {
+				field.colors[i+1] = interpolateColor(field.gradient, i/me.nuances);
 			}
 		});
+	},
 
-		if (options.jsonFile) {
-			console.log('      Generiere JSONs');
+	me.generateJSONs = function (jsonFilename) {
+		console.log('   Generiere JSONs');
 
-			var json = {
-				x0:     [],
-				y0:     [],
-				width:  [],
-				height: [],
-				xc:     [],
-				yc:     [],
-				sTitle: [],
-				sWiki:  [],
-				value:  [],
-				bev:    []
-			};
+		var json = {
+			x0:     [],
+			y0:     [],
+			width:  [],
+			height: [],
+			xc:     [],
+			yc:     [],
+			sTitle: [],
+			sWiki:  [],
+			value:  [],
+			bev:    []
+		};
 
+		regions.features.forEach(function (region, i) {
+			var b = calcBoundaries(region.geometry);
+			json.x0[i]     = b.x0.toFixed(0);
+			json.y0[i]     = b.y0.toFixed(0);
+			json.width[i]  = b.w.toFixed(0);
+			json.height[i] = b.h.toFixed(0);
+			json.xc[i]     = (b.xc-b.x0).toFixed(0);
+			json.yc[i]     = (b.yc-b.y0).toFixed(0);
+			json.bev[i]    = region.properties.EWZ;
+			json.sTitle[i] = region.properties.GEN;
+			json.sWiki[i]  = region.properties.wiki;
+			if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
+		});
+
+		me.fields.forEach(function (field) {
 			regions.features.forEach(function (region, i) {
-				var b = calcBoundaries(region.geometry);
-				json.x0[i]     = b.x0.toFixed(0);
-				json.y0[i]     = b.y0.toFixed(0);
-				json.width[i]  = b.w.toFixed(0);
-				json.height[i] = b.h.toFixed(0);
-				json.xc[i]     = (b.xc-b.x0).toFixed(0);
-				json.yc[i]     = (b.yc-b.y0).toFixed(0);
-				json.bev[i]    = region.properties.EWZ;
-				json.sTitle[i] = region.properties.GEN;
-				json.sWiki[i]  = region.properties.wiki;
-				if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
+				var value = region.properties['ZENSUS'+field.id];
+				if (value === undefined) {
+					value = '';
+				} else {
+					value = value.toFixed(2);
+				}
+				json.value[i] = value;
 			});
+			json.sDesc = field.title;
 
-			options.fields.forEach(function (field) {
-				regions.features.forEach(function (region, i) {
-					var value = region.properties['ZENSUS'+field.id];
-					if (value === undefined) {
-						value = '';
-					} else {
-						value = value.toFixed(2);
-					}
-					json.value[i] = value;
-				});
-				json.sDesc = field.title;
-
-				var jsonFile = options.jsonFile.replace(/\%/g, field.id);
-				ensureFolder(jsonFile);
-				
-				var result = [];
-				Object.keys(json).forEach(function (key) {
-					var values = JSON.stringify(json[key]);
-					if (key[0] == 's') {
-						key = key.substr(1).toLowerCase();
-					} else {
-						values = values.replace(/\'|\"/g, '');
-					}
-					result.push('"'+key+'":'+values);
-				});
-				result = result.join(',\n');
-				result = '{\n'+result+'\n}';
-				result = result.replace(/\,null\,/g, ',');
-				result = result.replace(/\,null\,/g, ',');
-				result = result.replace(/\,null\,/g, ',');
-
-				fs.writeFileSync(jsonFile, result, 'utf8');
+			var jsonFile = jsonFilename.replace(/\%/g, field.id);
+			ensureFolder(jsonFile);
+			
+			var result = [];
+			Object.keys(json).forEach(function (key) {
+				var values = JSON.stringify(json[key]);
+				if (key[0] == 's') {
+					key = key.substr(1).toLowerCase();
+				} else {
+					values = values.replace(/\'\'/g, 'null');
+					values = values.replace(/\"\"/g, 'null');
+					values = values.replace(/\'|\"/g, '');
+				}
+				result.push('"'+key+'":'+values);
 			});
+			result = result.join(',\n');
+			result = '{\n'+result+'\n}';
+			
+			fs.writeFileSync(jsonFile, result, 'utf8');
+		});
+	}
 
-		}
+	me.generatePreviews = function (previewFilename, scale) {
+		if (!scale) scale = 1;
 
-		if (options.previewFile) {
-			console.log('      Generiere Previews');
+		console.log('   Generiere Previews');
+
+		var svg = [
+			'<?xml version="1.0" encoding="utf-8"?>',
+			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+			'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="'+(600*scale)+'px" height="'+(825*scale)+'px" xml:space="preserve">',
+			'<text x="600" y="30" style="font-family:Verdana; font-size:20;" text-anchor="middle">%%%text%%%</text>'
+		];
+		regions.features.forEach(function (region) {
+			var path = [];
+			switch (region.geometry.type) {
+				case 'Polygon':
+					path = GeoJSON2SVG(region.geometry.coordinates, 1, scale);
+				break;
+				case 'MultiPolygon':
+					path = GeoJSON2SVG(region.geometry.coordinates, 2, scale);
+				break;
+				default:
+					console.log(region.geometry);
+					process.exit();
+				break;
+			}
+			svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.2" stroke="#000"/>');
+		});
+		svg.push('</svg>');
+		svg = svg.join('\n');
+		svg = svg.split('%%%');
+
+		me.fields.forEach(function (field) {
+			svg[1] = field.title;
+			regions.features.forEach(function (region, index) {
+				svg[index*2+3] = field.colors[region.properties['COLOR'+field.id]];
+			})
+
+			var previewFile = previewFilename.replace(/\%/g, field.id);
+			previewFile = previewFile.replace(/\.[^\.]+$/, '.svg');
+
+			ensureFolder(previewFile);
+
+			fs.writeFileSync(previewFile, svg.join(''), 'utf8');
+		})
+		
+		console.log('      Konvertiere Previews');
+
+		var previewFiles = previewFilename.replace(/\%/g, '*');
+		previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
+		//exec('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
+		console.log('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
+	}
+
+
+	me.generateMapniks = function (mapnikFilename, shapeFilename) {
+		console.log('   Generiere Mapnik-XML');
+		me.fields.forEach(function (field) {
+			var xml = fs.readFileSync('./mapnik.template.xml', 'utf8');
+
+			var rules = [];
+
+			for (var i = 0; i <= me.nuances; i++) {
+				var color = field.colors[i+1];
+				var line = '<Rule><Filter>([COLOR'+field.id+']='+(i+1)+')</Filter><PolygonSymbolizer fill="#'+color+'" fill-opacity="1"/></Rule>';
+				rules.push(line);
+			}
+
+			rules.push('<Rule><PolygonSymbolizer fill="#'+field.gradient[0]+'" fill-opacity="1"/></Rule>');
+
+			xml = xml.replace(/\%id\%/g, field.id);
+			xml = xml.replace(/\%rules\%/g, rules.join('\n\t\t'));
+			xml = xml.replace(/\%shape\%/g, shapeFilename);
+
+			var mapnikFile = mapnikFilename.replace(/\%/g, field.id);
+			ensureFolder(mapnikFile);
+			fs.writeFileSync(mapnikFile, xml, 'utf8');
+		});
+	}
+
+	me.generateGradients = function (gradientFilename) {
+		console.log('   Generiere Gradients');
+		me.fields.forEach(function (field) {
+			var stops = [];
+			for (var i = 1; i < field.gradient.length; i++) {
+				stops.push('<stop offset="'+(i-1)/(field.gradient.length-2)+'" style="stop-color:#'+field.gradient[i]+'"/>');
+			}
+
+			var labels = [];
+			var mini = Math.round(field.min/field.step);
+			var maxi = Math.round(field.max/field.step);
+			var digits = -Math.log(field.step)/Math.LN10;
+			digits = Math.ceil(Math.max(digits, 0));
+
+			for (var i = mini+1; i < maxi; i++) {
+				labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*field.step).toFixed(digits)+'</text>');
+			}
 
 			var svg = [
 				'<?xml version="1.0" encoding="utf-8"?>',
 				'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-				'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="1200px" height="1650px" xml:space="preserve">',
-				'<text x="600" y="30" style="font-family:Verdana; font-size:20;" text-anchor="middle">%%%text%%%</text>'
+				'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="580px" height="96px" viewBox="0 0 580 96" style="enable-background:new 0 0 580 96;" xml:space="preserve">',
+				'<g>',
+				'<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.5" y1="30" x2="579.5" y2="30">',
+				stops.join('\n'),
+				'</linearGradient>',
+				'<rect x="0.5" y="0.5" style="fill:url(#SVGID_1_);" width="579" height="59"/>',
+				'<path style="fill:#231F20;" d="M579,1v58H1V1H579 M580,0h-1H1H0v1v58v1h1h578h1v-1V1V0L580,0z"/>',
+				'</g>',
+				labels.join('\n'),
+				'</svg>'
 			];
-			regions.features.forEach(function (region) {
-				var path = [];
-				switch (region.geometry.type) {
-					case 'Polygon':
-						path = GeoJSON2SVG(region.geometry.coordinates, 1);
-					break;
-					case 'MultiPolygon':
-						path = GeoJSON2SVG(region.geometry.coordinates, 2);
-					break;
-					default:
-						console.log(region.geometry);
-						process.exit();
-					break;
-				}
-				svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.2" stroke="#000"/>');
-			});
-			svg.push('</svg>');
-			svg = svg.join('\n');
-			svg = svg.split('%%%');
 
-			options.fields.forEach(function (field) {
-				svg[1] = field.title;
-				regions.features.forEach(function (region, index) {
-					svg[index*2+3] = field.colors[region.properties['COLOR'+field.id]];
-				})
+			var gradientFile = gradientFilename.replace(/\%/g, field.id);
+			gradientFile = gradientFile.replace(/\.[^\.]+$/, '.svg');
 
-				var previewFile = options.previewFile.replace(/\%/g, field.id);
-				previewFile = previewFile.replace(/\.[^\.]+$/, '.svg');
+			ensureFolder(gradientFile);
 
-				ensureFolder(previewFile);
-
-				fs.writeFileSync(previewFile, svg.join(''), 'utf8');
-			})
-			
-			console.log('      Konvertiere Previews');
-
-			var previewFiles = options.previewFile.replace(/\%/g, '*');
-			previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
-			exec('mogrify -background white -density 36 -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
-		}
+			fs.writeFileSync(gradientFile, svg.join('\n'), 'utf8');
+		});
 
 
-		if (options.mapnikFile) {
-			console.log('      Generiere Mapnik-XML');
-			options.fields.forEach(function (field) {
-				var xml = fs.readFileSync('./mapnik.template.xml', 'utf8');
-
-				var rules = [];
-
-				for (var i = 0; i <= options.nuances; i++) {
-					var color = field.colors[i+1];
-					var line = '<Rule><Filter>([COLOR'+field.id+']='+(i+1)+')</Filter><PolygonSymbolizer fill="#'+color+'" fill-opacity="1"/></Rule>';
-					rules.push(line);
-				}
-
-				rules.push('<Rule><PolygonSymbolizer fill="#'+field.gradient[0]+'" fill-opacity="1"/></Rule>');
-
-				xml = xml.replace(/\%id\%/g, field.id);
-				xml = xml.replace(/\%rules\%/g, rules.join('\n\t\t'));
-				xml = xml.replace(/\%shape\%/g, options.shapeFile);
-
-				var mapnikFile = options.mapnikFile.replace(/\%/g, field.id);
-				ensureFolder(mapnikFile);
-				fs.writeFileSync(mapnikFile, xml, 'utf8');
-			});
-		}
-
-		if (options.gradientFile) {
-			console.log('      Generiere Gradients');
-			options.fields.forEach(function (field) {
-				var stops = [];
-				for (var i = 1; i < field.gradient.length; i++) {
-					stops.push('<stop offset="'+(i-1)/(field.gradient.length-2)+'" style="stop-color:#'+field.gradient[i]+'"/>');
-				}
-
-				var labels = [];
-				var mini = Math.round(field.min/field.step);
-				var maxi = Math.round(field.max/field.step);
-				var digits = -Math.log(field.step)/Math.LN10;
-				digits = Math.ceil(Math.max(digits, 0));
-
-				for (var i = mini+1; i < maxi; i++) {
-					labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*field.step).toFixed(digits)+'</text>');
-				}
-
-				var svg = [
-					'<?xml version="1.0" encoding="utf-8"?>',
-					'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-					'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="580px" height="96px" viewBox="0 0 580 96" style="enable-background:new 0 0 580 96;" xml:space="preserve">',
-					'<g>',
-					'<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.5" y1="30" x2="579.5" y2="30">',
-					stops.join('\n'),
-					'</linearGradient>',
-					'<rect x="0.5" y="0.5" style="fill:url(#SVGID_1_);" width="579" height="59"/>',
-					'<path style="fill:#231F20;" d="M579,1v58H1V1H579 M580,0h-1H1H0v1v58v1h1h578h1v-1V1V0L580,0z"/>',
-					'</g>',
-					labels.join('\n'),
-					'</svg>'
-				];
-
-				var gradientFile = options.gradientFile.replace(/\%/g, field.id);
-				gradientFile = gradientFile.replace(/\.[^\.]+$/, '.svg');
-
-				ensureFolder(gradientFile);
-
-				fs.writeFileSync(gradientFile, svg.join('\n'), 'utf8');
-			});
-
-
-			console.log('      Konvertiere Gradients');
-			var gradientFiles = options.gradientFile.replace(/\%/g, '*');
-			gradientFiles = gradientFiles.replace(/\.[^\.]+$/, '.svg');
-			exec('mogrify -background white -format png -quality 95 '+gradientFiles+' && rm '+gradientFiles);
-		}
+		console.log('      Konvertiere Gradients');
+		var gradientFiles = gradientFilename.replace(/\%/g, '*');
+		gradientFiles = gradientFiles.replace(/\.[^\.]+$/, '.svg');
+		exec('mogrify -background white -format png -quality 95 '+gradientFiles+' && rm '+gradientFiles);
 	}
 
 	return me;
@@ -430,17 +435,23 @@ var ensureFolder = function (folder) {
 	rec(path.dirname(folder));
 }
 
-var GeoJSON2SVG = function (points, depth) {
+var GeoJSON2SVG = function (points, depth, scale) {
 	if (depth > 0) {
 		return points.map(function (list) {
-			return GeoJSON2SVG(list, depth-1)
+			return GeoJSON2SVG(list, depth-1, scale)
 		}).join(' ');
 	} else {
 		var lastPoint = '';
+		var s = 4*scale;
+		var digits = Math.ceil(Math.log(s)/Math.LN10);
 		var result = points.map(function (point) {
-			var x = 200*( point[0] -  5.5)*0.616;
-			var y = 200*(-point[1] + 55.1)+50;
-			return x.toFixed(0)+','+y.toFixed(0);
+			var x = 100*( point[0] -  5.5)*0.616;
+			var y = 100*(-point[1] + 55.1)+25;
+
+			x = Math.round(x*s)/s;
+			y = Math.round(y*s)/s;
+
+			return x.toFixed(digits)+','+y.toFixed(digits);
 		});
 
 		do {

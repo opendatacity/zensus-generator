@@ -363,209 +363,206 @@ var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b
 
 
 
-geojson.generateLokaler({
-	nuances: 8*8,
-	previewFile: './results/previews/zensus%.png',
-	jsonFile: './results/jsons/zensus%.json',
-	gradientFile: './results/skalen/skala-%.png',
-	mapnikFile: './results/xml/Zensus%.xml',
-	shapeFile: '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp',
-	fields:[
-		{
-			id:'101',
-			title:'Bevölkerungsanteil mit Religion oder Glaubensrichtung in %',
-			value:function (p) { return 100*(p.CHRIST+p.SONST)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil mit christlichem Glauben in %',
-			value:function (p) { return 100*(p.CHRIST)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil mit katholischem Glauben in %',
-			value:function (p) { return 100*(p.RKATH)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil mit evangelischem Glauben in %',
-			value:function (p) { return 100*(p.EVANG)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil mit sonstigem Glauben in %',
-			value:function (p) { return 100*(p.SONST)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil ohne Religion oder Glaubensrichtung in %',
-			value:function (p) { return 100*(p.KEINE)/(p.BEV-p.OANGABE) },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Bevölkerungsanteil ohne Angabe des Glaubens in %',
-			value:function (p) { return 100*(p.OANGABE)/(p.BEV) },
-			gradient:gWeissBlau
-		},
+geojson.setFields(8*8, [
+	{
+		id:'101',
+		title:'Bevölkerungsanteil mit Religion oder Glaubensrichtung in %',
+		value:function (p) { return 100*(p.CHRIST+p.SONST)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil mit christlichem Glauben in %',
+		value:function (p) { return 100*(p.CHRIST)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil mit katholischem Glauben in %',
+		value:function (p) { return 100*(p.RKATH)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil mit evangelischem Glauben in %',
+		value:function (p) { return 100*(p.EVANG)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil mit sonstigem Glauben in %',
+		value:function (p) { return 100*(p.SONST)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil ohne Religion oder Glaubensrichtung in %',
+		value:function (p) { return 100*(p.KEINE)/(p.BEV-p.OANGABE) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Bevölkerungsanteil ohne Angabe des Glaubens in %',
+		value:function (p) { return 100*(p.OANGABE)/(p.BEV) },
+		gradient:gWeissBlau
+	},
 
 
 
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung in %',
-			value:function (p) { return 100*(p.Zensus_EWZ/p.BFS_EWZ - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Männer) in %',
-			value:function (p) { return 100*(p.Zensus_EW_M/p.BFS_EW_M - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Frauen) in %',
-			value:function (p) { return 100*(p.Zensus_EW_W/p.BFS_EW_W - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 2011 - 1994) in %',
-			value:function (p) { return 100*(p.Zensus_gebjahr_1/p.BFS_gebjahr_1 - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1993 - 1982) in %',
-			value:function (p) { return 100*(p.Zensus_gebjahr_2/p.BFS_gebjahr_2 - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1981 - 1962) in %',
-			value:function (p) { return 100*(p.Zensus_gebjahr_3/p.BFS_gebjahr_3 - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1961 - 1947) in %',
-			value:function (p) { return 100*(p.Zensus_gebjahr_4/p.BFS_gebjahr_4 - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
-		{
-			title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1946 und früher) in %',
-			value:function (p) { return 100*(p.Zensus_gebjahr_5/p.BFS_gebjahr_5 - 1) },
-			gradient:gViolettGruen,
-			min: -10,
-			max:  10
-		},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung in %',
+		value:function (p) { return 100*(p.Zensus_EWZ/p.BFS_EWZ - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Männer) in %',
+		value:function (p) { return 100*(p.Zensus_EW_M/p.BFS_EW_M - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (bei Frauen) in %',
+		value:function (p) { return 100*(p.Zensus_EW_W/p.BFS_EW_W - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 2011 - 1994) in %',
+		value:function (p) { return 100*(p.Zensus_gebjahr_1/p.BFS_gebjahr_1 - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1993 - 1982) in %',
+		value:function (p) { return 100*(p.Zensus_gebjahr_2/p.BFS_gebjahr_2 - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1981 - 1962) in %',
+		value:function (p) { return 100*(p.Zensus_gebjahr_3/p.BFS_gebjahr_3 - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1961 - 1947) in %',
+		value:function (p) { return 100*(p.Zensus_gebjahr_4/p.BFS_gebjahr_4 - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+	{
+		title:'Unterschied zwischen Zensus und Bevölkerungsfortschreibung (Geburtsjahr 1946 und früher) in %',
+		value:function (p) { return 100*(p.Zensus_gebjahr_5/p.BFS_gebjahr_5 - 1) },
+		gradient:gViolettGruen,
+		min: -10,
+		max:  10
+	},
+
+
+
+	{
+		title:'Anteil der Erwerbsfähigen an der ganzen Bevölkerung in %',
+		value:function (p) { return 100*p.ERWERBST/p.BEV },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbsfähigen an der ganzen Bevölkerung in %',
+		value:function (p) { return 100*p.ERWERBSTW/p.BEV },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der männlichen Erwerbsfähigen an der ganzen Bevölkerung in %',
+		value:function (p) { return 100*p.ERWERBSTM/p.BEV },
+		gradient:gWeissBlau
+	},
+
+
+	{
+		title:'Anteil der Erwerbstätigen an den Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBST/(p.ERWERBST+p.ERWERBSL) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbstätigen an allen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSTW/(p.ERWERBST+p.ERWERBSL) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbstätigen an allen Erwerbstätigen in %',
+		value:function (p) { return 100*p.ERWERBSTW/p.ERWERBST },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbstätigen an den weiblichen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSTW/(p.ERWERBSTW+p.ERWERBSLW) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der männlichen Erwerbstätigen an den männlichen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSTM/(p.ERWERBSTM+p.ERWERBSLM) },
+		gradient:gWeissBlau
+	},
+
+
+
+	{
+		title:'Anteil der Erwerbslosen an der Bevölkerung in %',
+		value:function (p) { return 100*p.ERWERBSL/p.BEV },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der Erwerbslosen an den Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSL/(p.ERWERBST+p.ERWERBSL) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbslosen an allen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSLW/(p.ERWERBST+p.ERWERBSL) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbslosen an allen Erwerbslosen in %',
+		value:function (p) { return 100*p.ERWERBSLW/p.ERWERBSL },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der weiblichen Erwerbslosen an den weiblichen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSLW/(p.ERWERBSTW+p.ERWERBSLW) },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der männlichen Erwerbslosen an den männlichen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBSLM/(p.ERWERBSTM+p.ERWERBSLM) },
+		gradient:gWeissBlau
+	},
+
 
 /*
-
-		{
-			title:'Anteil der Erwerbsfähigen an der ganzen Bevölkerung in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der weiblichen Erwerbsfähigen an der ganzen Bevölkerung in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der männlichen Erwerbsfähigen an der ganzen Bevölkerung in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-
+	{
+		title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBST/p.BEV },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBST/p.BEV },
+		gradient:gWeissBlau
+	},
+	{
+		title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
+		value:function (p) { return 100*p.ERWERBST/p.BEV },
+		gradient:gWeissBlau
+	},*/
 
 
-		{
-			title:'Anteil der Erwerbstätigen an der Bevölkerung in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der Erwerbstätigen an den Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der weiblichen Erwerbstätigen an allen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der weiblichen Erwerbstätigen an den weiblichen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der männlichen Erwerbstätigen an den männlichen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
+]);
 
-
-
-		{
-			title:'Anteil der Erwerbslosen an der Bevölkerung in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der Erwerbslosen an den Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der weiblichen Erwerbslosen an allen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der weiblichen Erwerbslosen an den weiblichen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der männlichen Erwerbslosen an den männlichen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-
-
-
-		{
-			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},
-		{
-			title:'Anteil der Erwerbstätigen zwischen 18-29 Jahren an allen Erwerbsfähigen in %',
-			value:function (p) { return 100*p.ERWERBST/p.BEV },
-			gradient:gWeissBlau
-		},*/
-
-
-
-
-
-
-	]
-});
+//geojson.generateJSONs('./results/jsons/zensus%.json');
+geojson.generatePreviews('./results/previews/zensus%.png');
+//geojson.generateGradients('./results/skalen/skala-%.png'),
+//geojson.generateMapniks('./results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/landkreise.shp');
 
 //geojson.logStatistics();
 
