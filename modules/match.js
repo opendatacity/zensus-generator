@@ -251,8 +251,9 @@ exports.loadGeoJSON = function (filename) {
 		var svg = [
 			'<?xml version="1.0" encoding="utf-8"?>',
 			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
-			'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="600px" height="825px" xml:space="preserve">',
-			'<text x="300" y="15" style="font-family:Verdana; font-size:10;" text-anchor="middle">%%%text%%%</text>'
+			'<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="600px" height="840px" xml:space="preserve">',
+			'<text x="300" y="25" style="font-family:Georgia; font-size:15; letter-spacing:0em" text-anchor="middle">%%%text%%%</text>',
+			'<text x="599" y="837" style="font-family:Georgia; font-size:5;" text-anchor="end">CC-BY OpenDataCity</text>'
 		];
 		regions.features.forEach(function (region) {
 			var path = [];
@@ -268,7 +269,7 @@ exports.loadGeoJSON = function (filename) {
 					process.exit();
 				break;
 			}
-			svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.2" stroke="#000"/>');
+			svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.1" stroke="#000"/>');
 		});
 		svg.push('</svg>');
 		svg = svg.join('\n');
@@ -292,8 +293,8 @@ exports.loadGeoJSON = function (filename) {
 
 		var previewFiles = previewFilename.replace(/\%/g, '*');
 		previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
-		
-		exec('mogrify -background white -density '+(72/scale)+' -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
+
+		exec('mogrify -background white -density '+(72*scale)+' -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
 	}
 
 
@@ -445,8 +446,8 @@ var GeoJSON2SVG = function (points, depth, scale) {
 		var s = 4*scale;
 		var digits = Math.ceil(Math.log(s)/Math.LN10);
 		var result = points.map(function (point) {
-			var x = 100*( point[0] -  5.5)*0.616;
-			var y = 100*(-point[1] + 55.1)+25;
+			var x =  61.6*( point[0] -  5.5) -  5;
+			var y = 100.0*(-point[1] + 55.1) + 40;
 
 			x = Math.round(x*s)/s;
 			y = Math.round(y*s)/s;
