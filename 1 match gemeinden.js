@@ -216,28 +216,10 @@ geojson.setFields(8*8, [
 		gradient:gWeissBlau
 	},
 	{
-		id:'016',
-		title:'Einwohner pro Wohnheim',
-		value:function (p) { return p.EWZ/p.WOHEIM },
-		gradient:gWeissBlau
-	},
-	{
-		id:'017',
-		title:'Einwohner pro Einfamilienhäuser',
-		value:function (p) { return p.EWZ/p.EFH },
-		gradient:gWeissBlau
-	},
-	{
 		id:'018',
 		title:'Anteil der Einfamilienhäuser an allen Wohngebäuden in %',
 		value:function (p) { return p.EFHPC },
 		gradient:gWeissGruen
-	},
-	{
-		id:'019',
-		title:'Einwohner pro freistehender Einfamilienhäuser',
-		value:function (p) { return p.EWZ/p.FREFH },
-		gradient:gWeissBlau
 	},
 	{
 		id:'020',
