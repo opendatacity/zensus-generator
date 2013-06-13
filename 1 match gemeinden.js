@@ -6,22 +6,6 @@ var geojson = match.loadGeoJSON('../geojson/gemeinden.json');
 var convertInteger = function (v) { return parseInt(v, 10) };
 var convertNumber  = function (v) { return parseFloat(v) };
 
-
-
-/*
-geojson.match({
-	data:match.loadCSV('./2010-12-31/31122010_Auszug_GV_sauber.csv'),
-	myField:'RS_ALT',
-	foreignField:'GEM_KEY',
-	addFields:[
-		{name:'FLAECHE', convert:convertNumber  },
-		{name:'EWZ_ALT', convert:convertInteger }
-	],
-	hideWarning: function (properties) { return properties.DES.substr(0,12) == 'Gemeindefrei' }
-});
-*/
-
-
 geojson.match({
 	data:match.loadCSV('../shared/wikipedia/Gemeinden_wikipedia.csv'),
 	myField:'RAU_RS',
