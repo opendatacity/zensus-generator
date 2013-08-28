@@ -1,5 +1,7 @@
 
 results/
+geojson/verwaltungsgemeinschaften.json
+geojson/zensus01-03.json
+geojson/zensus04-09.json
 .SyncID
-
 .SyncIgnore
