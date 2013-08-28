@@ -389,8 +389,8 @@ geojson.setFields(8*8, [
 
 // Erzeuge eine Vorschau der Karten.
 // Der Kartenausschnitt ist hartgecodet, aber es lässt sich zumindest der zoomfaktor angeben.
-geojson.generatePreviews('./results/previews/zensus%.png', 1);
-geojson.generatePreviews('./results/huge/zensus%.png', 16);
+//geojson.generatePreviews('./results/previews/zensus%.png', 1);
+//geojson.generatePreviews('./results/huge/zensus%.png', 16);
 
 // hier werden die geojsons erzeugt, die das lokaler-Frontend benötigt
 geojson.generateJSONs('./results/jsons/zensus%.json');
@@ -403,7 +403,9 @@ geojson.generateMapniks('./results/xml/Zensus%.xml', '/home/mapuser/mappy/data/s
 geojson.generateGradients('./results/skalen/skala-%.png'),
 
 // Zum Schluss soll das neue GeoJSON mit den zusätzlichen Werten gespeichert werden.
-geojson.saveGeo('./results/shape/gemeinden', true);
+
+geojson.saveGeo('./results/shape/gemeinden', false);
+
 // Wenn der 2. Parameter true ist, wird das GeoJSON gleich in ein Shape umgewandelt, das Mapnik benötigt.
 // Das Konvertieren wird mit dem Kommandozeilentool "ogr2ogr" durchgeführt. (modules/match.js Zeile 68)
 // Aktuell ist die Konvertierung nur für Mac eingerichtet, lässt sich aber auch leicht manuell durchführen.
