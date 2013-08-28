@@ -1,7 +1,7 @@
 
 var match = require('./modules/match.js');
 
-var geojson = match.loadGeoJSON('../geojson/gemeinden.json');
+var geojson = match.loadGeoJSON('./geojson/gemeinden.json');
 
 var convertInteger = function (v) { return parseInt(v, 10) };
 var convertNumber  = function (v) { return parseFloat(v) };

@@ -1,7 +1,7 @@
 
 var match = require('./modules/match.js');
 
-var geojson = match.loadGeoJSON('../geojson/kreise.json');
+var geojson = match.loadGeoJSON('./geojson/kreise.json');
 
 var convertInteger = function (v) { return parseInt(v, 10) };
 var convertNumber  = function (v) { return parseFloat(v) };
