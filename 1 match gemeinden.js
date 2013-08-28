@@ -1,15 +1,50 @@
+/*
+	Ok, das System funktioniert in den folgenden Schritten.
+
+	1. Die Vektordaten als GeoJSON laden. (loadGeoJSON)
+	2. Die Zahlendaten als CSV laden. (loadCSV)
+	3. Die gewünschten Werte der CSV zum GeoJSON hinzufügen. (geojson.match)
+	4. Die darzustellen Werte festlegen und als Farb-Indizes zum GeoJSON hinzufügen. (geojson.setFields)
+	5. Alle Angaben exportieren, inklusive:
+		- Mapnik-XML-Konfiguration
+		- GeoJSON inklusive Geodaten, der neuen Werte und der Farbindizes
+		- Lokaler-Frontend-JSONs
+		- Gradienten-Bildchen für die Legende
+		- Vorschaubilder
+	6. Das GeoJSON muss in ein Shape umgewandelt werden - notfalls per Konsole mit ogr2ogr
+
+*/
+
+
 
 var match = require('./modules/match.js');
 
+
+// Lade GeoJSON - hier die Gemeinden
 var geojson = match.loadGeoJSON('./geojson/gemeinden.json');
 
 var convertInteger = function (v) { return parseInt(v, 10) };
 var convertNumber  = function (v) { return parseFloat(v) };
 
+// Lade nun eine CSV-Datei und matche sie mit den GeoJSON-Daten:
 geojson.match({
+
+	/*
+		Lade die CSV als "Array of Objects".
+		Jede Zeile wird dabei zu einem Object,
+		die Spaltenüberschriften werden zu den jeweiligen Object-Keys,
+		die Wert werden zu den jeweiligen Object-Values,
+	*/
 	data:match.loadCSV('../shared/wikipedia/Gemeinden_wikipedia.csv'),
+
+	// Bei Matching wird der Spaltenname "myField" im geoJSON gesucht in der CSV "foreignField"
 	myField:'RAU_RS',
 	foreignField:'RS_ALT,C,20',
+
+	// Welche Felder sollen übernommen werden? Jeder Eintrag besteht dabei aus:
+	// "name": Feldname in der CSV
+	// "newName": Neuer Name, falls es denn ein anderer sein soll
+	// "convert": Eine Funktion, die einen String übergeben bekommt.
 	addFields:[
 		{
 			name:'LINK,C,65',
@@ -21,6 +56,9 @@ geojson.match({
 			}
 		}
 	],
+
+	// Manchmal existieren keine Daten zu den Gemeinden, weil dort niemand wohnt.
+	// Also ignoriere Warnungen für "gemeindefreie" Gebiete
 	hideWarning: function (properties) { return properties.DES.substr(0,12) == 'Gemeindefrei' }
 });
 
@@ -97,13 +135,24 @@ geojson.match({
 	hideWarning: function (properties) { return properties.DES.substr(0,12) == 'Gemeindefrei' }
 });
 
+
+// Hier werden die Gradienten definiert.
 var gGelbRot =      ['DDDDDD','FFFFE5','FFF7BC','FEE391','FEC44F','FE9929','EC7014','CC4C02','993404','662506'];
 var gViolettGruen = ['F7F7F7','1b7837','5aae61','a6dba0','d9f0d3','f7f7f7','e7d4e8','c2a5cf','9970ab','762a83'];
 var gWeissBlau =    ['FFFFFF','FFF7FB','ECE7F2','D0D1E6','A6BDDB','74A9CF','3690C0','0570B0','045A8D','023858'];
 var gWeissGruen =   ['FFFFFF','f7fcf5','e5f5e0','c7e9c0','a1d99b','74c476','41ab5d','238b45','006d2c','00441b'];
 var gWeissRot =     ['FFFFFF','fff5f0','fee0d2','fcbba1','fc9272','fb6a4a','ef3b2c','cb181d','a50f15','67000d'];
 
+/*
+	Jetzt werden die Werte verarbeitet.
+	"id": Gibt die Karte an, die z.B. in "zensus001" übersetzt wird.
+	"title": ist der Titel.
+	"value": Nimmt die Eingabewerte und rechnet sie um. Kann der Name einer Spalte sein,
+	oder eine Funktion, die den Wert berechnet.
+	"gradient": will ein Array von 6stelligen hexadezimalen Strings.
 
+	ggf. können min- und max-Werte festgelegt werden, wenn man sie nicht automatisch berechnet haben möchte.
+*/
 geojson.setFields(8*8, [
 	{
 		id:'001',
@@ -335,14 +384,31 @@ geojson.setFields(8*8, [
 	}
 ]);
 
+// Jetzt werden die Ergebnisse generiert.
+// Bitte beachten, dass das Zeichen "%" mit der Karten-Id ersetzt wird.
 
-geojson.generateJSONs('./results/jsons/zensus%.json');
-
+// Erzeuge eine Vorschau der Karten.
+// Der Kartenausschnitt ist hartgecodet, aber es lässt sich zumindest der zoomfaktor angeben.
 geojson.generatePreviews('./results/previews/zensus%.png', 1);
 geojson.generatePreviews('./results/huge/zensus%.png', 16);
 
-geojson.generateGradients('./results/skalen/skala-%.png'),
+// hier werden die geojsons erzeugt, die das lokaler-Frontend benötigt
+geojson.generateJSONs('./results/jsons/zensus%.json');
+
+// Außerdem die Konfigurationsdatei für Mapnik
+// Der zweite Parameter gibt das Shape an, dass in der Mapnik-XML referenziert werden soll.
 geojson.generateMapniks('./results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp');
 
+// Anschließend noch die kleinen png-gradient rendern, die rechts unten als Legende eingeblendet werden.
+geojson.generateGradients('./results/skalen/skala-%.png'),
 
-//geojson.saveGeo('./results/shape/gemeinden', true);
+// Zum Schluss soll das neue GeoJSON mit den zusätzlichen Werten gespeichert werden.
+geojson.saveGeo('./results/shape/gemeinden', true);
+// Wenn der 2. Parameter true ist, wird das GeoJSON gleich in ein Shape umgewandelt, das Mapnik benötigt.
+// Das Konvertieren wird mit dem Kommandozeilentool "ogr2ogr" durchgeführt. (modules/match.js Zeile 68)
+// Aktuell ist die Konvertierung nur für Mac eingerichtet, lässt sich aber auch leicht manuell durchführen.
+// Download hier: http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries
+
+
+
+
