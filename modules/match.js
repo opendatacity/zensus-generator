@@ -426,6 +426,8 @@ var interpolateColor = function (gradient, value) {
 
 var path = require('path');
 var ensureFolder = function (folder) {
+	console.log('Function "ensureFolder" was disabled');
+	/*
 	folder = path.resolve(path.dirname(require.main.filename), folder);
 	var rec = function (fol) {
 		if (fol != '/') {
@@ -434,6 +436,7 @@ var ensureFolder = function (folder) {
 		}
 	}
 	rec(path.dirname(folder));
+	*/
 }
 
 var GeoJSON2SVG = function (points, depth, scale) {
