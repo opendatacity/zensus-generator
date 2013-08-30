@@ -217,7 +217,8 @@ exports.loadGeoJSON = function (filename) {
 			sTitle: [],
 			sWiki:  [],
 			value:  [],
-			bev:    []
+			bev:    [],
+			ags:    []
 		};
 
 		regions.features.forEach(function (region, i) {
@@ -232,6 +233,7 @@ exports.loadGeoJSON = function (filename) {
 			json.sTitle[i] = region.properties.GEN;
 			json.sWiki[i]  = region.properties.wiki;
 			if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
+			json.ags[i]  = region.properties.AGS;
 		});
 
 		me.fields.forEach(function (field) {
