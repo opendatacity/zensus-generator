@@ -1,23 +1,39 @@
 var fs = require('fs');
 var exec = require('child_process').exec;
+var isWin = (/^win/.test(require('os').platform()));
 
 exports.loadGeoJSON = function (filename) {
 	var me = this;
 
 	me.fields;
-	
+
 	console.log('   Lade GeoJSON "'+filename+'"');
 	var regions = fs.readFileSync(filename, 'utf8');
 
 	console.log('      Lese GeoJSON');
 	regions = JSON.parse(regions);
 
-	me.match = function (options) {
+	me.count = function(){
+	   return regions.features.length;
+	}
+
+	me.match = function (options, translateID) {
 		console.log('   Matching');
 		var data = options.data;
 		var lut = {};
+	   	var done = 0;
+		var test = {};
+		var foreignIdFunction;
+		if (Object.prototype.toString.call(options.foreignField) == '[object Function]') {
+			foreignIdFunction = options.foreignField;
+		} else {
+			foreignIdFunction = function (entry) {
+				return entry[options.foreignField]
+			};
+		}
 		data.forEach(function (entry) {
-			lut['_'+entry[options.foreignField]] = entry;
+			var lut_id = foreignIdFunction(entry);
+			lut['_'+lut_id] = entry;
 		});
 
 		var idFunction;
@@ -29,12 +45,19 @@ exports.loadGeoJSON = function (filename) {
 
 		regions.features.forEach(function (region) {
 			var id = idFunction(region.properties);
+			if (translateID) {
+				id = translateID(id);
+			}
 			if (lut['_'+id] === undefined) {
 				if (!options.hideWarning || !options.hideWarning(region.properties)) {
 					console.warn('id "'+id+'" nicht gefunden');
 					console.warn(region.properties);
 				}
 			} else {
+				if (!test[id]) {
+					test[id]=true;
+					done++;
+				}
 				options.addFields.forEach(function (field) {
 					var newName = field.newName ? field.newName : field.name;
 					var value = field.convert(lut['_'+id][field.name]);
@@ -53,6 +76,7 @@ exports.loadGeoJSON = function (filename) {
 				})
 			}
 		})
+		return {done:done, linecount:data.length};
 	}
 
 	me.saveGeo = function (filename, convertShape) {
@@ -60,12 +84,13 @@ exports.loadGeoJSON = function (filename) {
 		var json = JSON.stringify(regions/*, null, '\t'*/);
 
 		console.log('      Speichere GeoJSON');
-		ensureFolder(filename);
-		fs.writeFileSync(filename+'.geojson', json, 'utf8');	
+		ensureFileFolder(filename);
+		fs.writeFileSync(filename+'.geojson', json, 'utf8');
 
 		if (convertShape) {
 			console.log('      Konvertiere zu Shapefile');
-			exec('/Library/Frameworks/GDAL.framework/Programs/ogr2ogr -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson', function (error, stdout, stderr) {
+			var cmd = (isWin ? 'C:/Tools/maps/gdal/bin/ogr2ogr.exe' : '/Library/Frameworks/GDAL.framework/Programs/ogr2ogr') + ' -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson';
+			exec(cmd, function (error, stdout, stderr) {
 				if (stdout) console.log('stdout: ' + stdout);
 				if (stderr) console.log('stderr: ' + stderr);
 				if (error)  console.log('exec error: ' + error);
@@ -222,8 +247,8 @@ exports.loadGeoJSON = function (filename) {
 			json.sDesc = field.title;
 
 			var jsonFile = jsonFilename.replace(/\%/g, field.id);
-			ensureFolder(jsonFile);
-			
+			ensureFileFolder(jsonFile);
+
 			var result = [];
 			Object.keys(json).forEach(function (key) {
 				var values = JSON.stringify(json[key]);
@@ -238,7 +263,7 @@ exports.loadGeoJSON = function (filename) {
 			});
 			result = result.join(',\n');
 			result = '{\n'+result+'\n}';
-			
+
 			fs.writeFileSync(jsonFile, result, 'utf8');
 		});
 	}
@@ -284,11 +309,11 @@ exports.loadGeoJSON = function (filename) {
 			var previewFile = previewFilename.replace(/\%/g, field.id);
 			previewFile = previewFile.replace(/\.[^\.]+$/, '.svg');
 
-			ensureFolder(previewFile);
+			ensureFileFolder(previewFile);
 
 			fs.writeFileSync(previewFile, svg.join(''), 'utf8');
 		})
-		
+
 		console.log('      Konvertiere Previews');
 
 		var previewFiles = previewFilename.replace(/\%/g, '*');
@@ -297,11 +322,10 @@ exports.loadGeoJSON = function (filename) {
 		exec('mogrify -background white -density '+(72*scale)+' -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
 	}
 
-
-	me.generateMapniks = function (mapnikFilename, shapeFilename) {
+	me.generateMapniks = function (templateFilename, mapnikFilename, shapeFilename) {
 		console.log('   Generiere Mapnik-XML');
 		me.fields.forEach(function (field) {
-			var xml = fs.readFileSync('./mapnik.template.xml', 'utf8');
+			var xml = fs.readFileSync(templateFilename, 'utf8');
 
 			var rules = [];
 
@@ -318,7 +342,7 @@ exports.loadGeoJSON = function (filename) {
 			xml = xml.replace(/\%shape\%/g, shapeFilename);
 
 			var mapnikFile = mapnikFilename.replace(/\%/g, field.id);
-			ensureFolder(mapnikFile);
+			ensureFileFolder(mapnikFile);
 			fs.writeFileSync(mapnikFile, xml, 'utf8');
 		});
 	}
@@ -359,7 +383,7 @@ exports.loadGeoJSON = function (filename) {
 			var gradientFile = gradientFilename.replace(/\%/g, field.id);
 			gradientFile = gradientFile.replace(/\.[^\.]+$/, '.svg');
 
-			ensureFolder(gradientFile);
+			ensureFileFolder(gradientFile);
 
 			fs.writeFileSync(gradientFile, svg.join('\n'), 'utf8');
 		});
@@ -424,17 +448,34 @@ var interpolateColor = function (gradient, value) {
 	return color;
 }
 
-var path = require('path');
-var ensureFolder = function (folder) {
-	folder = path.resolve(path.dirname(require.main.filename), folder);
-	var rec = function (fol) {
-		if (fol != '/') {
-			rec(path.dirname(fol));
-			if (!fs.existsSync(fol)) fs.mkdirSync(fol);
+var pathSep = require('path').sep;
+var ensureFileFolder = function (path) {
+	var dirs = path.split(pathSep);
+	dirs.pop();
+	var root = "";
+
+//	mkDir();
+
+	function mkDir() {
+		var dir = dirs.shift();
+		if (dir === "") {// If directory starts with a /, the first path will be an empty string.
+			root = pathSep;
+		}
+		if (!fs.existsSync(root + dir)) {
+			fs.mkdirSync(root + dir);
+			root += dir + pathSep;
+			if (dirs.length > 0) {
+				mkDir();
+			}
+		} else {
+			root += dir + pathSep;
+			if (dirs.length > 0) {
+				mkDir();
+			}
 		}
 	}
-	rec(path.dirname(folder));
-}
+};
+
 
 var GeoJSON2SVG = function (points, depth, scale) {
 	if (depth > 0) {
@@ -516,7 +557,7 @@ var calcBoundaries = function (geometry) {
 			var area = 0;
 			for (var i = 0; i < poly.length; i++) {
 				var j = (i+1) % poly.length;
-				
+
 				var x  = poly[i][0];
 				var y  = poly[i][1];
 				var x1 = poly[j][0];
