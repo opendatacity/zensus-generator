@@ -7,21 +7,21 @@ exports.loadGeoJSON = function (filename) {
 
 	me.fields;
 
-	console.log('   Lade GeoJSON "'+filename+'"');
+	console.log('   Lade GeoJSON "' + filename + '"');
 	var regions = fs.readFileSync(filename, 'utf8');
 
 	console.log('      Lese GeoJSON');
 	regions = JSON.parse(regions);
 
-	me.count = function(){
-	   return regions.features.length;
+	me.count = function () {
+		return regions.features.length;
 	}
 
 	me.match = function (options, translateID) {
 		console.log('   Matching');
 		var data = options.data;
 		var lut = {};
-	   	var done = 0;
+		var done = 0;
 		var test = {};
 		var foreignIdFunction;
 		if (Object.prototype.toString.call(options.foreignField) == '[object Function]') {
@@ -33,14 +33,16 @@ exports.loadGeoJSON = function (filename) {
 		}
 		data.forEach(function (entry) {
 			var lut_id = foreignIdFunction(entry);
-			lut['_'+lut_id] = entry;
+			lut['_' + lut_id] = entry;
 		});
 
 		var idFunction;
 		if (Object.prototype.toString.call(options.myField) == '[object Function]') {
 			idFunction = options.myField;
 		} else {
-			idFunction = function (properties) { return properties[options.myField] };
+			idFunction = function (properties) {
+				return properties[options.myField]
+			};
 		}
 
 		regions.features.forEach(function (region) {
@@ -48,21 +50,21 @@ exports.loadGeoJSON = function (filename) {
 			if (translateID) {
 				id = translateID(id);
 			}
-			if (lut['_'+id] === undefined) {
+			if (lut['_' + id] === undefined) {
 				if (!options.hideWarning || !options.hideWarning(region.properties)) {
-					console.warn('id "'+id+'" nicht gefunden');
+					console.warn('id "' + id + '" nicht gefunden');
 					console.warn(region.properties);
 				}
 			} else {
 				if (!test[id]) {
-					test[id]=true;
+					test[id] = true;
 					done++;
 				}
 				options.addFields.forEach(function (field) {
 					var newName = field.newName ? field.newName : field.name;
-					var value = field.convert(lut['_'+id][field.name]);
+					var value = field.convert(lut['_' + id][field.name]);
 					if (region.properties[newName] !== undefined) {
-						var abw = Math.abs(region.properties[newName]/value - 1);
+						var abw = Math.abs(region.properties[newName] / value - 1);
 						if (abw > 0.002) {
 							console.warn('Wert gibt\'s schon!');
 							console.warn(region.properties);
@@ -76,8 +78,8 @@ exports.loadGeoJSON = function (filename) {
 				})
 			}
 		})
-		return {done:done, linecount:data.length};
-	}
+		console.log('      Import:', done, ' von ', data.length, '; Total:', me.count());
+	};
 
 	me.saveGeo = function (filename, convertShape) {
 		console.log('   Erstelle GeoJSON');
@@ -85,11 +87,11 @@ exports.loadGeoJSON = function (filename) {
 
 		console.log('      Speichere GeoJSON');
 		ensureFileFolder(filename);
-		fs.writeFileSync(filename+'.geojson', json, 'utf8');
+		fs.writeFileSync(filename + '.geojson', json, 'utf8');
 
 		if (convertShape) {
 			console.log('      Konvertiere zu Shapefile');
-			var cmd = (isWin ? 'C:/Tools/maps/gdal/bin/ogr2ogr.exe' : '/Library/Frameworks/GDAL.framework/Programs/ogr2ogr') + ' -overwrite -f "ESRI Shapefile" '+filename+'.shp '+filename+'.geojson';
+			var cmd = (isWin ? 'C:/Tools/maps/gdal/bin/ogr2ogr.exe' : '/Library/Frameworks/GDAL.framework/Programs/ogr2ogr') + ' -overwrite -f "ESRI Shapefile" ' + filename + '.shp ' + filename + '.geojson';
 			exec(cmd, function (error, stdout, stderr) {
 				if (stdout) console.log('stdout: ' + stdout);
 				if (stderr) console.log('stderr: ' + stderr);
@@ -114,7 +116,7 @@ exports.loadGeoJSON = function (filename) {
 
 		var result = [];
 		Object.keys(fieldCount).forEach(function (key) {
-			result.push(key+'\t'+(fieldCount[key]/n));
+			result.push(key + '\t' + (fieldCount[key] / n));
 		});
 
 		console.log(result.join('\n'));
@@ -129,10 +131,10 @@ exports.loadGeoJSON = function (filename) {
 		var allowedSteps = [];
 		for (var i = -4; i <= 8; i++) {
 			var f = Math.pow(10, i);
-			allowedSteps.push(f*1);
-			allowedSteps.push(f*2);
-			allowedSteps.push(f*3);
-			allowedSteps.push(f*5);
+			allowedSteps.push(f * 1);
+			allowedSteps.push(f * 2);
+			allowedSteps.push(f * 3);
+			allowedSteps.push(f * 5);
 		}
 
 		var id, minLength;
@@ -145,7 +147,7 @@ exports.loadGeoJSON = function (filename) {
 				id++;
 				field.id = id.toFixed(0);
 				if (field.id.length < minLength) {
-					field.id = ('0000000000'+field.id).substr(10+field.id.length-minLength, minLength);
+					field.id = ('0000000000' + field.id).substr(10 + field.id.length - minLength, minLength);
 				}
 			}
 		});
@@ -164,25 +166,27 @@ exports.loadGeoJSON = function (filename) {
 				} else {
 					value = undefined;
 				}
-				region.properties['ZENSUS'+field.id] = value;
+				region.properties['ZENSUS' + field.id] = value;
 			});
 
 			// Berechne Skale
-			values = values.sort(function (a,b) { return a-b });
+			values = values.sort(function (a, b) {
+				return a - b
+			});
 
-			var min = values[Math.round(values.length*0.01)];
-			var max = values[Math.round(values.length*0.99)];
+			var min = values[Math.round(values.length * 0.01)];
+			var max = values[Math.round(values.length * 0.99)];
 
 			if (field.min) min = field.min;
 			if (field.max) max = field.max;
 
-			var step = (max-min)/5;
+			var step = (max - min) / 5;
 			var bestStep = 1e30;
 			allowedSteps.forEach(function (newStep) {
-				if (Math.abs(Math.log(step/newStep)) < Math.abs(Math.log(step/bestStep))) bestStep = newStep;
+				if (Math.abs(Math.log(step / newStep)) < Math.abs(Math.log(step / bestStep))) bestStep = newStep;
 			});
-			var roundMin = Math.floor(min/bestStep)*bestStep;
-			var roundMax = Math.ceil( max/bestStep)*bestStep;
+			var roundMin = Math.floor(min / bestStep) * bestStep;
+			var roundMax = Math.ceil(max / bestStep) * bestStep;
 
 			field.min = roundMin;
 			field.max = roundMax;
@@ -190,85 +194,87 @@ exports.loadGeoJSON = function (filename) {
 
 			// Berechne Farben
 			regions.features.forEach(function (region) {
-				var value = region.properties['ZENSUS'+field.id];
-				var color = Math.round(me.nuances*(value-roundMin)/(roundMax-roundMin));
+				var value = region.properties['ZENSUS' + field.id];
+				var color = Math.round(me.nuances * (value - roundMin) / (roundMax - roundMin));
 				if (color < 0) color = 0;
 				if (color > me.nuances) color = me.nuances;
-				region.properties['COLOR'+field.id] = (value === undefined) ? 0 : color+1;
+				region.properties['COLOR' + field.id] = (value === undefined) ? 0 : color + 1;
 			});
 
 			field.colors = [field.gradient[0]];
 			for (var i = 0; i <= me.nuances; i++) {
-				field.colors[i+1] = interpolateColor(field.gradient, i/me.nuances);
+				field.colors[i + 1] = interpolateColor(field.gradient, i / me.nuances);
 			}
 		});
 	},
 
-	me.generateJSONs = function (jsonFilename) {
-		console.log('   Generiere JSONs');
+		me.generateJSONs = function (jsonFilename) {
+			console.log('   Generiere JSONs');
 
-		var json = {
-			x0:     [],
-			y0:     [],
-			width:  [],
-			height: [],
-			xc:     [],
-			yc:     [],
-			sTitle: [],
-			sWiki:  [],
-			value:  [],
-			bev:    [],
-			ags:    []
-		};
+			var json = {
+				x0: [],
+				y0: [],
+				width: [],
+				height: [],
+				xc: [],
+				yc: [],
+				sTitle: [],
+				sWiki: [],
+				value: [],
+				bev: [],
+				ags: []
+			};
 
-		regions.features.forEach(function (region, i) {
-			var b = calcBoundaries(region.geometry);
-			json.x0[i]     = b.x0.toFixed(0);
-			json.y0[i]     = b.y0.toFixed(0);
-			json.width[i]  = b.w.toFixed(0);
-			json.height[i] = b.h.toFixed(0);
-			json.xc[i]     = (b.xc-b.x0).toFixed(0);
-			json.yc[i]     = (b.yc-b.y0).toFixed(0);
-			json.bev[i]    = region.properties.EWZ;
-			json.sTitle[i] = region.properties.GEN;
-			json.sWiki[i]  = region.properties.wiki;
-			if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
-			json.ags[i]  = region.properties.AGS;
-		});
-
-		me.fields.forEach(function (field) {
 			regions.features.forEach(function (region, i) {
-				var value = region.properties['ZENSUS'+field.id];
-				if (value === undefined) {
-					value = '';
-				} else {
-					value = value.toFixed(2);
-				}
-				json.value[i] = value;
+				var b = calcBoundaries(region.geometry);
+				json.x0[i] = b.x0.toFixed(0);
+				json.y0[i] = b.y0.toFixed(0);
+				json.width[i] = b.w.toFixed(0);
+				json.height[i] = b.h.toFixed(0);
+				json.xc[i] = (b.xc - b.x0).toFixed(0);
+				json.yc[i] = (b.yc - b.y0).toFixed(0);
+				json.bev[i] = region.properties.EWZ;
+				json.sTitle[i] = region.properties.GEN;
+				json.sWiki[i] = region.properties.wiki;
+				if (json.sWiki[i] == json.sTitle[i]) json.sWiki[i] = 0;
+				json.ags[i] = region.properties.AGS;
 			});
-			json.sDesc = field.title;
 
-			var jsonFile = jsonFilename.replace(/\%/g, field.id);
-			ensureFileFolder(jsonFile);
+			me.fields.forEach(function (field) {
+				regions.features.forEach(function (region, i) {
+					var value = region.properties['ZENSUS' + field.id];
+					if (value === undefined) {
+						value = '';
+					} else {
+						value = value.toFixed(2);
+					}
+					json.value[i] = value;
+				});
+				json.sDesc = field.title;
 
-			var result = [];
-			Object.keys(json).forEach(function (key) {
-				var values = JSON.stringify(json[key]);
-				if (key[0] == 's') {
-					key = key.substr(1).toLowerCase();
-				} else {
-					values = values.replace(/\'\'/g, 'null');
-					values = values.replace(/\"\"/g, 'null');
-					values = values.replace(/\'|\"/g, '');
-				}
-				result.push('"'+key+'":'+values);
+				var jsonFile = jsonFilename.replace(/\%/g, field.id);
+				ensureFileFolder(jsonFile);
+
+				var result = [];
+				Object.keys(json).forEach(function (key) {
+					var values = JSON.stringify(json[key]);
+					if (key == "ags") {
+						//leave the AGS alone!!!1!
+					} else if (key[0] == 's') {
+						key = key.substr(1).toLowerCase();
+					} else {
+						values = values.replace(/\'\'/g, 'null');
+						values = values.replace(/\"\"/g, 'null');
+						values = values.replace(/\'|\"/g, '');
+					}
+					result.push('"' + key + '":' + values);
+				});
+				result = result.join(',\n');
+				result = '{\n' + result + '\n}';
+
+				fs.writeFileSync(jsonFile, result, 'utf8');
 			});
-			result = result.join(',\n');
-			result = '{\n'+result+'\n}';
-
-			fs.writeFileSync(jsonFile, result, 'utf8');
-		});
-	}
+		}
 
 	me.generatePreviews = function (previewFilename, scale) {
 		if (!scale) scale = 1;
@@ -287,16 +293,16 @@ exports.loadGeoJSON = function (filename) {
 			switch (region.geometry.type) {
 				case 'Polygon':
 					path = GeoJSON2SVG(region.geometry.coordinates, 1, scale);
-				break;
+					break;
 				case 'MultiPolygon':
 					path = GeoJSON2SVG(region.geometry.coordinates, 2, scale);
-				break;
+					break;
 				default:
 					console.log(region.geometry);
 					process.exit();
-				break;
+					break;
 			}
-			svg.push('<path d="'+path+'" fill="#%%%0%%%" stroke-width="0.1" stroke="#000"/>');
+			svg.push('<path d="' + path + '" fill="#%%%0%%%" stroke-width="0.1" stroke="#000"/>');
 		});
 		svg.push('</svg>');
 		svg = svg.join('\n');
@@ -305,7 +311,7 @@ exports.loadGeoJSON = function (filename) {
 		me.fields.forEach(function (field) {
 			svg[1] = field.title;
 			regions.features.forEach(function (region, index) {
-				svg[index*2+3] = field.colors[region.properties['COLOR'+field.id]];
+				svg[index * 2 + 3] = field.colors[region.properties['COLOR' + field.id]];
 			})
 
 			var previewFile = previewFilename.replace(/\%/g, field.id);
@@ -321,7 +327,7 @@ exports.loadGeoJSON = function (filename) {
 		var previewFiles = previewFilename.replace(/\%/g, '*');
 		previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
 
-		exec('mogrify -background white -density '+(72*scale)+' -format png -quality 95 '+previewFiles+' && rm '+previewFiles);
+		exec('mogrify -background white -density ' + (72 * scale) + ' -format png -quality 95 ' + previewFiles + ' && rm ' + previewFiles);
 	}
 
 	me.generateMapniks = function (templateFilename, mapnikFilename, shapeFilename) {
@@ -332,12 +338,12 @@ exports.loadGeoJSON = function (filename) {
 			var rules = [];
 
 			for (var i = 0; i <= me.nuances; i++) {
-				var color = field.colors[i+1];
-				var line = '<Rule><Filter>([COLOR'+field.id+']='+(i+1)+')</Filter><PolygonSymbolizer fill="#'+color+'" fill-opacity="1"/></Rule>';
+				var color = field.colors[i + 1];
+				var line = '<Rule><Filter>([COLOR' + field.id + ']=' + (i + 1) + ')</Filter><PolygonSymbolizer fill="#' + color + '" fill-opacity="1"/></Rule>';
 				rules.push(line);
 			}
 
-			rules.push('<Rule><PolygonSymbolizer fill="#'+field.gradient[0]+'" fill-opacity="1"/></Rule>');
+			rules.push('<Rule><PolygonSymbolizer fill="#' + field.gradient[0] + '" fill-opacity="1"/></Rule>');
 
 			xml = xml.replace(/\%id\%/g, field.id);
 			xml = xml.replace(/\%rules\%/g, rules.join('\n\t\t'));
@@ -354,17 +360,17 @@ exports.loadGeoJSON = function (filename) {
 		me.fields.forEach(function (field) {
 			var stops = [];
 			for (var i = 1; i < field.gradient.length; i++) {
-				stops.push('<stop offset="'+(i-1)/(field.gradient.length-2)+'" style="stop-color:#'+field.gradient[i]+'"/>');
+				stops.push('<stop offset="' + (i - 1) / (field.gradient.length - 2) + '" style="stop-color:#' + field.gradient[i] + '"/>');
 			}
 
 			var labels = [];
-			var mini = Math.round(field.min/field.step);
-			var maxi = Math.round(field.max/field.step);
-			var digits = -Math.log(field.step)/Math.LN10;
+			var mini = Math.round(field.min / field.step);
+			var maxi = Math.round(field.max / field.step);
+			var digits = -Math.log(field.step) / Math.LN10;
 			digits = Math.ceil(Math.max(digits, 0));
 
-			for (var i = mini+1; i < maxi; i++) {
-				labels.push('<text x="'+(580*(i-mini)/(maxi-mini))+'" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">'+(i*field.step).toFixed(digits)+'</text>');
+			for (var i = mini + 1; i < maxi; i++) {
+				labels.push('<text x="' + (580 * (i - mini) / (maxi - mini)) + '" y="90" style="font-family:\'MyriadPro-Regular\'; font-size:30;" text-anchor="middle">' + (i * field.step).toFixed(digits) + '</text>');
 			}
 
 			var svg = [
@@ -394,19 +400,19 @@ exports.loadGeoJSON = function (filename) {
 		console.log('      Konvertiere Gradients');
 		var gradientFiles = gradientFilename.replace(/\%/g, '*');
 		gradientFiles = gradientFiles.replace(/\.[^\.]+$/, '.svg');
-		exec('mogrify -background white -format png -quality 95 '+gradientFiles+' && rm '+gradientFiles);
+		exec('mogrify -background white -format png -quality 95 ' + gradientFiles + ' && rm ' + gradientFiles);
 	}
 
 	return me;
 }
 
 exports.loadCSV = function (filename) {
-	console.log('   Lade CSV "'+filename+'"');
+	console.log('   Lade CSV "' + filename + '"');
 	var data = fs.readFileSync(filename, 'utf8');
 
 	data = data.split('\r\n');
 
-	while (data[data.length-1].replace(/^\s+|\s+$/,'') == '') data.pop();
+	while (data[data.length - 1].replace(/^\s+|\s+$/, '') == '') data.pop();
 
 	var header = data.shift().replace(/\"/g, '').split(';');
 
@@ -426,11 +432,11 @@ var interpolateColor = function (gradient, value) {
 	if (value < 0) value = 0;
 	if (value > 1) value = 1;
 
-	var value = value*(gradient.length-2);
+	var value = value * (gradient.length - 2);
 
 	var index = Math.floor(value);
 	if (index < 0) index = 0;
-	if (index > gradient.length-3) index = gradient.length-3;
+	if (index > gradient.length - 3) index = gradient.length - 3;
 
 	var offset = value - index;
 	if (offset < 0) offset = 0;
@@ -440,23 +446,25 @@ var interpolateColor = function (gradient, value) {
 
 	var color = '';
 	for (var i = 0; i < 3; i++) {
-		var v0 = parseInt(gradient[index  ].substr(i*2, 2), 16);
-		var v1 = parseInt(gradient[index+1].substr(i*2, 2), 16);
-		var v = Math.round((v1-v0)*offset + v0);
-		v = '00'+v.toString(16);
-		color += v.substr(v.length-2, 2);
+		var v0 = parseInt(gradient[index  ].substr(i * 2, 2), 16);
+		var v1 = parseInt(gradient[index + 1].substr(i * 2, 2), 16);
+		var v = Math.round((v1 - v0) * offset + v0);
+		v = '00' + v.toString(16);
+		color += v.substr(v.length - 2, 2);
 	}
 
 	return color;
 }
 
-var pathSep = require('path').sep;
-var ensureFileFolder = function (path) {
-	var dirs = path.split(pathSep);
+var path = require('path');
+var pathSep = path.sep;
+var ensureFileFolder = function (filename) {
+	filename = path.resolve(path.dirname(require.main.filename), filename);
+	var dirs = filename.split(pathSep);
 	dirs.pop();
 	var root = "";
 
-//	mkDir();
+	mkDir();
 
 	function mkDir() {
 		var dir = dirs.shift();
@@ -482,28 +490,28 @@ var ensureFileFolder = function (path) {
 var GeoJSON2SVG = function (points, depth, scale) {
 	if (depth > 0) {
 		return points.map(function (list) {
-			return GeoJSON2SVG(list, depth-1, scale)
+			return GeoJSON2SVG(list, depth - 1, scale)
 		}).join(' ');
 	} else {
 		var lastPoint = '';
-		var s = 4*scale;
-		var digits = Math.ceil(Math.log(s)/Math.LN10);
+		var s = 4 * scale;
+		var digits = Math.ceil(Math.log(s) / Math.LN10);
 		var result = points.map(function (point) {
-			var x =  61.6*( point[0] -  5.5) -  5;
-			var y = 100.0*(-point[1] + 55.1) + 40;
+			var x = 61.6 * ( point[0] - 5.5) - 5;
+			var y = 100.0 * (-point[1] + 55.1) + 40;
 
-			x = Math.round(x*s)/s;
-			y = Math.round(y*s)/s;
+			x = Math.round(x * s) / s;
+			y = Math.round(y * s) / s;
 
-			return x.toFixed(digits)+','+y.toFixed(digits);
+			return x.toFixed(digits) + ',' + y.toFixed(digits);
 		});
 
 		do {
 			var smaller = false;
 
 			for (var i = 0; i < result.length; i++) {
-				if ((i >= 1) && (result[i] == result[i-1])) {
-					result[i-1] = undefined;
+				if ((i >= 1) && (result[i] == result[i - 1])) {
+					result[i - 1] = undefined;
 					smaller = true;
 				}
 			}
@@ -515,9 +523,9 @@ var GeoJSON2SVG = function (points, depth, scale) {
 			result = temp;
 
 			for (var i = 0; i < result.length; i++) {
-				if ((i >= 2) && (result[i] == result[i-2])) {
-					result[i-1] = undefined;
-					result[i-2] = undefined;
+				if ((i >= 2) && (result[i] == result[i - 2])) {
+					result[i - 1] = undefined;
+					result[i - 2] = undefined;
 					smaller = true;
 				}
 			}
@@ -532,14 +540,14 @@ var GeoJSON2SVG = function (points, depth, scale) {
 		if (result.length <= 2) {
 			return '';
 		} else {
-			return 'M'+result.join('L')+'z';
+			return 'M' + result.join('L') + 'z';
 		}
 	}
 }
 
 var calcBoundaries = function (geometry) {
 
-	var b = {x0:1e10, y0:1e10, x1:-1e10, y1:-1e10};
+	var b = {x0: 1e10, y0: 1e10, x1: -1e10, y1: -1e10};
 
 	var addPoint = function (x, y) {
 		if (b.x0 > x) b.x0 = x;
@@ -552,30 +560,32 @@ var calcBoundaries = function (geometry) {
 
 	var addPolygon = function (poly, depth) {
 		if (depth > 1) {
-			poly.forEach(function (point) { addPolygon(point, depth-1) });
+			poly.forEach(function (point) {
+				addPolygon(point, depth - 1)
+			});
 		} else {
 			var xs = 0;
 			var ys = 0;
 			var area = 0;
 			for (var i = 0; i < poly.length; i++) {
-				var j = (i+1) % poly.length;
+				var j = (i + 1) % poly.length;
 
-				var x  = poly[i][0];
-				var y  = poly[i][1];
+				var x = poly[i][0];
+				var y = poly[i][1];
 				var x1 = poly[j][0];
 				var y1 = poly[j][1];
 
-				var a = (x*y1 - x1*y);
+				var a = (x * y1 - x1 * y);
 
-				xs   += (x+x1)*a;
-				ys   += (y+y1)*a;
+				xs += (x + x1) * a;
+				ys += (y + y1) * a;
 				area += a;
 
-				addPoint(x,y);
+				addPoint(x, y);
 			}
 			if (Math.abs(area) > maxArea) {
-				xc = xs/(3*area);
-				yc = ys/(3*area);
+				xc = xs / (3 * area);
+				yc = ys / (3 * area);
 				maxArea = Math.abs(area);
 			}
 		}
@@ -587,11 +597,11 @@ var calcBoundaries = function (geometry) {
 		case 'Polygon':
 			var geo = geometry.coordinates;
 			addPolygon(geo, 2);
-		break;
+			break;
 		case 'MultiPolygon':
 			var geo = geometry.coordinates;
 			addPolygon(geo, 3);
-		break;
+			break;
 		default:
 			console.error('Unknown Geometry Type: ' + geometry.type);
 			process.exit();
@@ -599,17 +609,17 @@ var calcBoundaries = function (geometry) {
 
 	var scaleFactor = 3000;
 
-	var xOffset =  5.8;
+	var xOffset = 5.8;
 	var yOffset = 47.2;
 
-	b.x0 = Math.round((b.x0-xOffset)*scaleFactor);
-	b.y0 = Math.round((b.y0-yOffset)*scaleFactor);
-	b.x1 = Math.round((b.x1-xOffset)*scaleFactor);
-	b.y1 = Math.round((b.y1-yOffset)*scaleFactor);
-	b.w  = b.x1 - b.x0;
-	b.h  = b.y1 - b.y0;
-	b.xc = Math.round((xc-xOffset)*scaleFactor);
-	b.yc = Math.round((yc-yOffset)*scaleFactor);
+	b.x0 = Math.round((b.x0 - xOffset) * scaleFactor);
+	b.y0 = Math.round((b.y0 - yOffset) * scaleFactor);
+	b.x1 = Math.round((b.x1 - xOffset) * scaleFactor);
+	b.y1 = Math.round((b.y1 - yOffset) * scaleFactor);
+	b.w = b.x1 - b.x0;
+	b.h = b.y1 - b.y0;
+	b.xc = Math.round((xc - xOffset) * scaleFactor);
+	b.yc = Math.round((yc - yOffset) * scaleFactor);
 
 	return b;
 }

@@ -62,7 +62,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Ausbildungsabschluss_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Ausbildungsabschluss_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -82,7 +82,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Ausbildungsabschluss_mÑnnlich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Ausbildungsabschluss_männlich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -102,7 +102,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Ausbildungsabschluss_weiblich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Ausbildungsabschluss_weiblich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -122,7 +122,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Erwerbsstatus_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Erwerbsstatus_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -142,7 +142,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Erwerbsstatus_mÑnnlich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Erwerbsstatus_männlich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -162,7 +162,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Erwerbsstatus_weiblich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Erwerbsstatus_weiblich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -182,7 +182,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MHG_Alter_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MHG_Alter_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -198,7 +198,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MHG_Alter_mÑnnlich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MHG_Alter_männlich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -214,7 +214,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MHG_Alter_weiblich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MHG_Alter_weiblich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -230,7 +230,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MIG-Erfahr_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MIG-Erfahr_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -243,7 +243,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MIG-Erfahr_mÑnnlich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MIG-Erfahr_männlich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -256,7 +256,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_MIG-Erfahr_weiblich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_MIG-Erfahr_weiblich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -269,7 +269,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Schulabschluss_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Schulabschluss_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -292,7 +292,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Schulabschluss_mÑnnlich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Schulabschluss_männlich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -315,7 +315,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Schulabschluss_weiblich_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Schulabschluss_weiblich_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[
@@ -338,7 +338,7 @@ geojson.match({
 });
 
 geojson.match({
-	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevîlkerung_nach_Religion_2011_V1_28Mai2013.csv'),
+	data:match.loadCSV('../shared/Zensusdaten/soziodemo_zip/Bevölkerung_nach_Religion_2011_V1_28Mai2013.csv'),
 	myField: function (p) { return ''+parseInt(p.RS, 10); },
 	foreignField:'AGS',
 	addFields:[

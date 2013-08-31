@@ -25,8 +25,8 @@
 var match = require('./modules/match.js');
 var fs = require('fs');
 
-//Lade Mapping für Mecklenburg-Vorpommern GSA-Umbennenung
-var mp_mapping = JSON.parse(fs.readFileSync('./geojson/meckpom_mapping_obj.json', 'utf8'));
+//Lade Mapping für Mecklenburg-Vorpommern AGS-Umbennenung
+var mp_mapping_gs = JSON.parse(fs.readFileSync('./geojson/meckpom_mapping_obj_gs.json', 'utf8'));
 
 // Lade GeoJSON - hier die Gemeinden
 var geojson = match.loadGeoJSON('./geojson/gemeinden_norden.json');
@@ -42,12 +42,12 @@ var convertPointedInteger = function (v) {
 	return parseInt(v, 10)
 };
 
-var translateID = function (id) {
+var translateGS = function (id) {
 	if ((id[0] == 1) && (id[1] == 3)) {
-		if (!mp_mapping[id]) {
+		if (!mp_mapping_gs[id]) {
 			console.log('Missing Mapping: ' + id);
 		}
-		return mp_mapping[id];
+		return mp_mapping_gs[id];
 	}
 	return id;
 };
@@ -198,7 +198,7 @@ geojson.match({
 
 //NORDEN DATEN
 
-var result = geojson.match({
+geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/Baufertigstellungen_2011_odc.csv'),
 	myField: 'AGS',
 	foreignField: foreignFieldAGS,
@@ -212,42 +212,9 @@ var result = geojson.match({
 	hideWarning: function (properties) {
 		return true;
 	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
+}, translateGS);
 
-result = geojson.match({
-	data: match.loadCSV('../shared/norden/data-csv/Preise_Staedte ueber 20000 Einwohner.csv'),
-	myField: 'AGS',
-	foreignField: foreignFieldAGS,
-	addFields: [
-		{
-			name: 'Whg_Miete_Q2_2008',
-			newName: 'NPREMIETE',
-			convert: convertNumber
-		},
-		{
-			name: 'Whg_Miete_Q2_Entwicklung',
-			newName: 'NPREMIETEE',
-			convert: convertNumber
-		},
-		{
-			name: 'Haus_Kauf_Q2_2013',
-			newName: 'NPREKAUF',
-			convert: convertPointedInteger
-		},
-		{
-			name: 'Haus_Kauf_Q2_2013_Entwicklung',
-			newName: 'NPREKAUFEN',
-			convert: convertNumber
-		}
-	],
-	hideWarning: function (properties) {
-		return true;
-	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
-
-result = geojson.match({
+geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/Einbrueche-Opendatacity.csv'),
 	myField: 'AGS',
 	foreignField: foreignFieldAGS,
@@ -261,10 +228,9 @@ result = geojson.match({
 	hideWarning: function (properties) {
 		return true;
 	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
+}, translateGS);
 
-result = geojson.match({
+geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/erholungsflaechen.csv'),
 	myField: 'AGS',
 	foreignField: foreignFieldAGS,
@@ -278,47 +244,23 @@ result = geojson.match({
 	hideWarning: function (properties) {
 		return true;
 	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
+}, translateGS);
 
-result = geojson.match({
+geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/NDR DDJ Auswertung Pendlersaldo 2011.csv'),
 	myField: 'AGS',
 	foreignField: foreignFieldAGS,
 	addFields: [
 		{
-			name: 'Auspendler',
-			newName: 'NPENAUS',
+			name: 'Saldo',
+			newName: 'NPENSAL',
 			convert: convertPointedInteger
 		}
 	],
 	hideWarning: function (properties) {
 		return true;
 	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
-
-result = geojson.match({
-	data: match.loadCSV('../shared/norden/data-csv/Auswertung Baulandverkaeufe 2001-2011.csv'),
-	myField: 'AGS',
-	foreignField: foreignFieldAGS,
-	addFields: [
-		{
-			name: 'STEIG2001',
-			newName: 'NSTEIG2001',
-			convert: convertNumber
-		},
-		{
-			name: 'KAUF2011',
-			newName: 'NKAUF2011',
-			convert: convertNumber
-		}
-	],
-	hideWarning: function (properties) {
-		return true;
-	}
-}, translateID);
-console.log('      Import:', result.done, ' von ', result.linecount, '; Total:', geojson.count());
+}, translateGS);
 
 
 /*
@@ -457,42 +399,25 @@ geojson.setFields(8 * 8, [
 		gradient: gWeissBlau
 	},
 
-
 	{
 		id: '216',
-		title: 'Baufertigstellungen 2011',
+		title: 'Baufertigstellungen in Prozent Anteil an allen Wohngebäuden',
 		value: function (p) {
-			return p.NBAUGEBS
+			return 100 * p.NBAUGEBS / p.WOGEB;
 		},
 		gradient: gWeissGruen
 	},
-//KREISE!!	{
-//		id: '217',
-//		title: 'Steigerungsraten im Vergleich zu 2001 in Prozent',
-//		value: function (p) {
-//			return p.NSTEIG2001
-//		},
-//		gradient: gWeissBlau
-//	},
-//	{
-//		id: '218',
-//		title: 'Durchschnittlicher Kaufwert je qm 2011',
-//		value: function (p) {
-//			return p.NKAUF2011
-//		},
-//		gradient: gWeissBlau
-//	},
 	{
 		id: '219',
-		title: 'Auspendler',
+		title: 'Auspendler Saldo',
 		value: function (p) {
-			return p.NPENAUS
+			return p.NPENSAL
 		},
 		gradient: gWeissBlau
 	},
 	{
 		id: '220',
-		title: 'Anteil Erholungsfläche',
+		title: 'Erholungsfläche (ha)',
 		value: function (p) {
 			return p.NFLAERH
 		},
@@ -500,48 +425,15 @@ geojson.setFields(8 * 8, [
 	},
 	{
 		id: '221',
-		title: 'Wohnungseinbrüche',
+		title: 'Wohnungseinbrüche pro 1000 Einwohner',
 		value: function (p) {
-			return p.NBRUCH
+			return (p.NBRUCH / p.EWZ) * 1000;
 		},
 		gradient: gWeissRot
-	},
-	{
-		id: '222',
-		title: 'Mietpreise',
-		value: function (p) {
-			return p.NPREMIETE
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '223',
-		title: 'Mietpreisentwicklung',
-		value: function (p) {
-			return p.NPREMIETEE
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '224',
-		title: 'Preise für Eigentumswohnungen/Häuser',
-		value: function (p) {
-			return p.NPREKAUF
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '225',
-		title: 'Entwicklung der Preise für Eigentumswohnungen/Häuser',
-		value: function (p) {
-			return p.NPREKAUFEN
-		},
-		gradient: gWeissBlau
 	}
 
 ]);
 
-//for (nr in [100]) {
 var destpath = '../shared/norden';
 // Erzeuge eine Vorschau der Karten.
 // Der Kartenausschnitt ist hartgecodet, aber es lässt sich zumindest der zoomfaktor angeben.
@@ -552,7 +444,7 @@ geojson.generatePreviews(destpath + '/results/huge/zensus%.png', 16);
 geojson.generateJSONs(destpath + '/results/jsons/zensus%.json');
 
 // Außerdem die Konfigurationsdatei für Mapnik
-// Der zweite Parameter gibt das Shape an, dass in der Mapnik-XML referenziert werden soll.
+// Der dritte Parameter gibt das Shape an, dass in der Mapnik-XML referenziert werden soll.
 geojson.generateMapniks('./mapnik.norden.template.xml', destpath + '/results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus_nord/gemeinden.shp');
 
 // Anschließend noch die kleinen png-gradient rendern, die rechts unten als Legende eingeblendet werden.
@@ -565,8 +457,7 @@ geojson.saveGeo(destpath + '/results/shape/gemeinden', true);
 // Aktuell ist die Konvertierung nur für Mac eingerichtet, lässt sich aber auch leicht manuell durchführen.
 // Download hier: http://trac.osgeo.org/gdal/wiki/DownloadingGdalBinaries
 
-//}
-console.log('Done');
+console.log('Done <3');
 
 
 
