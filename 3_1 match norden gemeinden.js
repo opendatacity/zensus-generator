@@ -263,6 +263,39 @@ geojson.match({
 }, translateGS);
 
 
+
+geojson.match({
+	data: match.loadCSV('../shared/norden/data-csv/Preise_Staedte ueber 20000 Einwohner.csv'),
+	myField: 'AGS',
+	foreignField: foreignFieldAGS,
+	addFields: [
+		{
+			name: 'Whg_Miete_Q2_2008',
+			newName: 'NPREMIETE',
+			convert: convertNumber
+		},
+		{
+			name: 'Whg_Miete_Q2_Entwicklung',
+			newName: 'NPREMIETEE',
+			convert: convertNumber
+		},
+		{
+			name: 'Haus_Kauf_Q2_2013',
+			newName: 'NPREKAUF',
+			convert: convertPointedInteger
+		},
+		{
+			name: 'Haus_Kauf_Q2_2013_Entwicklung',
+			newName: 'NPREKAUFEN',
+			convert: convertNumber
+		}
+	],
+	hideWarning: function (properties) {
+		//console.log(properties.AGS+' : '+ properties.GEN);
+		return true;
+	}
+}, translateGS);
+
 /*
  Jetzt werden die Werte verarbeitet.
  "id": Gibt die Karte an, die z.B. in "zensus001" übersetzt wird.
@@ -411,7 +444,7 @@ geojson.setFields(8 * 8, [
 		id: '219',
 		title: 'Auspendler Saldo',
 		value: function (p) {
-			return p.NPENSAL
+			return 100 * p.NPENSAL / p.EWZ;
 		},
 		gradient: gWeissBlau
 	},
@@ -430,9 +463,43 @@ geojson.setFields(8 * 8, [
 			return (p.NBRUCH / p.EWZ) * 1000;
 		},
 		gradient: gWeissRot
+	},
+
+	{
+		id: '222',
+		title: 'Mietpreise',
+		value: function (p) {
+			return p.NPREMIETE
+		},
+		gradient: gWeissBlau
+	},
+	{
+		id: '223',
+		title: 'Mietpreisentwicklung',
+		value: function (p) {
+			return p.NPREMIETEE
+		},
+		gradient: gWeissBlau
+	},
+	{
+		id: '224',
+		title: 'Preise für Eigentumswohnungen/Häuser',
+		value: function (p) {
+			return p.NPREKAUF
+		},
+		gradient: gWeissBlau
+	},
+	{
+		id: '225',
+		title: 'Entwicklung der Preise für Eigentumswohnungen/Häuser',
+		value: function (p) {
+			return p.NPREKAUFEN
+		},
+		gradient: gWeissBlau
 	}
 
 ]);
+
 
 var destpath = '../shared/norden';
 // Erzeuge eine Vorschau der Karten.

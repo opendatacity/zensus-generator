@@ -36,7 +36,7 @@ var reduceMeckPommesMapping = function () {
 		}
 	);
 	console.log('Schreibe McPom');
-//	fs.writeFileSync('./geojson/meckpom_mapping.json', JSON.stringify(mp_mapping, null, "\t"), 'utf8');
+	fs.writeFileSync('./geojson/meckpom_mapping.json', JSON.stringify(mp_mapping, null, "\t"), 'utf8');
 	fs.writeFileSync('./geojson/meckpom_mapping_obj_gs.json', JSON.stringify(mp_mapping_obj_gs), 'utf8');
 	fs.writeFileSync('./geojson/meckpom_mapping_obj_rs.json', JSON.stringify(mp_mapping_obj_rs), 'utf8');
 };

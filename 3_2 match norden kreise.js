@@ -400,6 +400,19 @@ geojson.match({
 	]
 });
 
+geojson.match({
+	data: match.loadCSV('../shared/Zensusdaten/demo_zip/Zensus_Demographie_V1_28Mai2013.csv'),
+	myField: 'RS',
+	foreignField: 'AGS',
+	addFields: [
+		{ name: 'EWZ', convert: convertInteger }
+	]  ,
+	hideWarning: function (properties) {
+		//console.log(properties.AGS+' : '+ properties.GEN);
+		return true;
+	}
+});
+
 var translateRS = function (id) {
 	if ((id[0] == 1) && (id[1] == 3)) {
 		if (!mp_mapping_rs[id]) {
@@ -423,40 +436,6 @@ var foreignFieldRS = function (entry) {
 };
 
 geojson.match({
-	data: match.loadCSV('../shared/norden/data-csv/Preise_Staedte ueber 20000 Einwohner.csv'),
-	myField: 'AGS',
-	foreignField: 'AGS',//foreignFieldAGS,
-	addFields: [
-		{
-			name: 'Whg_Miete_Q2_2008',
-			newName: 'NPREMIETE',
-			convert: convertNumber
-		},
-		{
-			name: 'Whg_Miete_Q2_Entwicklung',
-			newName: 'NPREMIETEE',
-			convert: convertNumber
-		},
-		{
-			name: 'Haus_Kauf_Q2_2013',
-			newName: 'NPREKAUF',
-			convert: convertPointedInteger
-		},
-		{
-			name: 'Haus_Kauf_Q2_2013_Entwicklung',
-			newName: 'NPREKAUFEN',
-			convert: convertNumber
-		}
-	],
-	hideWarning: function (properties) {
-		//console.log(properties.AGS+' : '+ properties.GEN);
-		return true;
-	}
-});
-//}, translateRS);
-
-
-geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/Auswertung Baulandverkaeufe 2001-2011.csv'),
 	myField: 'RS',
 	foreignField: foreignFieldRSShort,
@@ -476,7 +455,7 @@ geojson.match({
 		console.log(properties.AGS + ' : ' + properties.GEN);
 		return true;
 	}
-}, translateRS);
+});
 
 geojson.match({
 	data: match.loadCSV('../shared/norden/data-csv/Arbeitslosigkeit August 2013.csv'),
@@ -493,6 +472,22 @@ geojson.match({
 		return true;
 	}
 }, translateRS);
+
+geojson.match({
+	data: match.loadCSV('../shared/norden/data-csv/durschnittsmieten 2012 nach Kreisen.csv'),
+	myField: 'RS',
+	foreignField: foreignFieldRS,
+	addFields: [
+		{
+			name: 'NMIE12',
+			newName: 'NMIE12',
+			convert: convertNumber
+		}
+	],
+	hideWarning: function (properties) {
+		return true;
+	}
+});
 
 var gGelbRot = ['DDDDDD', 'FFFFE5', 'FFF7BC', 'FEE391', 'FEC44F', 'FE9929', 'EC7014', 'CC4C02', '993404', '662506'];
 var gViolettGruen = ['F7F7F7', '1b7837', '5aae61', 'a6dba0', 'd9f0d3', 'f7f7f7', 'e7d4e8', 'c2a5cf', '9970ab', '762a83'];
@@ -520,44 +515,20 @@ geojson.setFields(8 * 8, [
 	},
 
 	{
-		id: '222',
-		title: 'Mietpreise',
-		value: function (p) {
-			return p.NPREMIETE
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '223',
-		title: 'Mietpreisentwicklung',
-		value: function (p) {
-			return p.NPREMIETEE
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '224',
-		title: 'Preise für Eigentumswohnungen/Häuser',
-		value: function (p) {
-			return p.NPREKAUF
-		},
-		gradient: gWeissBlau
-	},
-	{
-		id: '225',
-		title: 'Entwicklung der Preise für Eigentumswohnungen/Häuser',
-		value: function (p) {
-			return p.NPREKAUFEN
-		},
-		gradient: gWeissBlau
-	},
-	{
 		id: '226',
 		title: 'Arbeitslosenquote',
 		value: function (p) {
 			return p.NARBQU
 		},
 		gradient: gWeissRot
+	},
+	{
+		id: '227',
+		title: 'Miete 2012 in €/m²',
+		value: function (p) {
+			return p.NMIE12
+		},
+		gradient: gWeissBlau
 	}
 ]);
 
@@ -566,7 +537,7 @@ geojson.generateJSONs(destpath + '/results/jsons/zensus%.json');
 geojson.generatePreviews(destpath + '/results/previews/zensus%.png', 1);
 geojson.generatePreviews(destpath + '/results/huge/zensus%.png', 16);
 geojson.generateGradients(destpath + '/results/skalen/skala-%.png');
-geojson.generateMapniks('./mapnik.norden.template.xml', destpath + '/results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus_norden/landkreise.shp');
+geojson.generateMapniks('./mapnik.norden.template.xml', destpath + '/results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus_nord/landkreise.shp');
 geojson.saveGeo(destpath + '/results/shape/landkreise', true);
 
 console.log('Done <3');
