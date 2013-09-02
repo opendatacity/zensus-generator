@@ -276,7 +276,7 @@ exports.loadGeoJSON = function (filename) {
 			});
 		}
 
-	me.generatePreviews = function (previewFilename, scale) {
+	me.generatePreviews = function (previewFilename, scale, makepng) {
 		if (!scale) scale = 1;
 
 		console.log('   Generiere Previews');
@@ -321,17 +321,28 @@ exports.loadGeoJSON = function (filename) {
 
 			fs.writeFileSync(previewFile, svg.join(''), 'utf8');
 		})
-
+		if (!makepng)
+			return;
 		console.log('      Konvertiere Previews');
 
 		var previewFiles = previewFilename.replace(/\%/g, '*');
 		previewFiles = previewFiles.replace(/\.[^\.]+$/, '.svg');
-
-		exec('mogrify -background white -density ' + (72 * scale) + ' -format png -quality 95 ' + previewFiles + ' && rm ' + previewFiles);
+		var cmd;
+		if (isWin)
+			cmd = '"C:/Program Files/ImageMagick-6.8.6-Q16/mogrify.exe" -background white -density ' + (72 * scale) + ' -format png -quality 95 ' + previewFiles;
+		else
+			cmd = 'mogrify -background white -density ' + (72 * scale) + ' -format png -quality 95 ' + previewFiles + ' && rm ' + previewFiles;
+		exec(cmd, function (error, stdout, stderr) {
+			if (stdout) console.log('stdout: ' + stdout);
+			if (stderr) console.log('stderr: ' + stderr);
+			if (error)  console.log('exec error: ' + error);
+		});
 	}
 
-	me.generateMapniks = function (templateFilename, mapnikFilename, shapeFilename) {
-		console.log('   Generiere Mapnik-XML');
+	me.generateMapniks = function (templateFilename, mapnikPath, shapeFilename) {
+		console.log('   Generiere Mapnik-XML & Tirex-Conf');
+		var mapnikFilename = mapnikPath + 'zensus%.xml';
+		var configFilename = mapnikPath + 'conf/zensus%.conf';
 		me.fields.forEach(function (field) {
 			var xml = fs.readFileSync(templateFilename, 'utf8');
 
@@ -347,11 +358,25 @@ exports.loadGeoJSON = function (filename) {
 
 			xml = xml.replace(/\%id\%/g, field.id);
 			xml = xml.replace(/\%rules\%/g, rules.join('\n\t\t'));
-			xml = xml.replace(/\%shape\%/g, shapeFilename);
+			xml = xml.replace(/\%shape\%/g, '/var/www/tiles.odcdn.de/data/shapes' + shapeFilename);
+			xml = xml.replace(/\%countries\%/g, '/var/www/tiles.odcdn.de/data/shapes/countries/10m-admin-0-countries.shp');
+			xml = xml.replace(/\%vg250\%/g, '/var/www/tiles.odcdn.de/data/shapes/VG250/VG250_Bundeslaender.shp');
+
+
 
 			var mapnikFile = mapnikFilename.replace(/\%/g, field.id);
 			ensureFileFolder(mapnikFile);
 			fs.writeFileSync(mapnikFile, xml, 'utf8');
+
+			var list = [];
+			list.push('name=zensus' + field.id);
+			list.push('tiledir=/var/www/tiles.odcdn.de/tiles/zensus' + field.id);
+			list.push('minz=0');
+			list.push('maxz=18');
+			list.push('mapfile=/var/www/tiles.odcdn.de/maps/zensus/zensus' + field.id + '.xml');
+			var configFile = configFilename.replace(/\%/g, field.id);
+			ensureFileFolder(configFile);
+			fs.writeFileSync(configFile, list.join('\n'), 'utf8');
 		});
 	}
 
@@ -400,7 +425,13 @@ exports.loadGeoJSON = function (filename) {
 		console.log('      Konvertiere Gradients');
 		var gradientFiles = gradientFilename.replace(/\%/g, '*');
 		gradientFiles = gradientFiles.replace(/\.[^\.]+$/, '.svg');
-		exec('mogrify -background white -format png -quality 95 ' + gradientFiles + ' && rm ' + gradientFiles);
+
+		var cmd;
+		if (isWin)
+			cmd = '"C:/Program Files/ImageMagick-6.8.6-Q16/mogrify.exe" -background white -format png -quality 95 ' + gradientFiles;
+		else
+			cmd = 'mogrify -background white -format png -quality 95 ' + gradientFiles + ' && rm ' + gradientFiles;
+		exec(cmd);
 	}
 
 	return me;

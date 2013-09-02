@@ -75,9 +75,10 @@ var foreignFieldAGS = function (entry) {
 // Hier werden die Gradienten definiert.
 var gGelbRot = ['DDDDDD', 'FFFFE5', 'FFF7BC', 'FEE391', 'FEC44F', 'FE9929', 'EC7014', 'CC4C02', '993404', '662506'];
 var gViolettGruen = ['F7F7F7', '1b7837', '5aae61', 'a6dba0', 'd9f0d3', 'f7f7f7', 'e7d4e8', 'c2a5cf', '9970ab', '762a83'];
-var gWeissBlau = ['FFFFFF', 'FFF7FB', 'ECE7F2', 'D0D1E6', 'A6BDDB', '74A9CF', '3690C0', '0570B0', '045A8D', '023858'];
-var gWeissGruen = ['FFFFFF', 'f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '006d2c', '00441b'];
-var gWeissRot = ['FFFFFF', 'fff5f0', 'fee0d2', 'fcbba1', 'fc9272', 'fb6a4a', 'ef3b2c', 'cb181d', 'a50f15', '67000d'];
+var gWeissBlau = ['FBFBFB', 'FFF7FB', 'ECE7F2', 'D0D1E6', 'A6BDDB', '74A9CF', '3690C0', '0570B0', '045A8D', '023858'];
+var gWeissGruen = ['FBFBFB', 'f7fcf5', 'e5f5e0', 'c7e9c0', 'a1d99b', '74c476', '41ab5d', '238b45', '006d2c', '00441b'];
+var gWeissRot = ['FBFBFB', 'fff5f0', 'fee0d2', 'fcbba1', 'fc9272', 'fb6a4a', 'ef3b2c', 'cb181d', 'a50f15', '67000d'];
+var gRotBlau =['FBFBFB', '8C510A','BF812D','dfc27d','f6e8c3','f5f5f5','c7eae5','80cdc1','35978f','01665e'];
 
 
 //  ZENUSDATEN
@@ -446,7 +447,7 @@ geojson.setFields(8 * 8, [
 		value: function (p) {
 			return 100 * p.NPENSAL / p.EWZ;
 		},
-		gradient: gWeissBlau
+		gradient: gRotBlau
 	},
 	{
 		id: '220',
@@ -495,7 +496,7 @@ geojson.setFields(8 * 8, [
 		value: function (p) {
 			return p.NPREKAUFEN
 		},
-		gradient: gWeissBlau
+		gradient: gRotBlau
 	}
 
 ]);
@@ -512,7 +513,7 @@ geojson.generateJSONs(destpath + '/results/jsons/zensus%.json');
 
 // Außerdem die Konfigurationsdatei für Mapnik
 // Der dritte Parameter gibt das Shape an, dass in der Mapnik-XML referenziert werden soll.
-geojson.generateMapniks('./mapnik.norden.template.xml', destpath + '/results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus_nord/gemeinden.shp');
+geojson.generateMapniks('./mapnik.norden.template.xml', destpath + '/results/xml/', '/zensus_nord/gemeinden.shp');
 
 // Anschließend noch die kleinen png-gradient rendern, die rechts unten als Legende eingeblendet werden.
 geojson.generateGradients(destpath + '/results/skalen/skala-%.png');

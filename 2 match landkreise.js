@@ -562,7 +562,7 @@ geojson.setFields(8*8, [
 //geojson.generateJSONs('./results/jsons/zensus%.json');
 geojson.generatePreviews('./results/previews/zensus%.png');
 //geojson.generateGradients('./results/skalen/skala-%.png'),
-//geojson.generateMapniks('./mapnik.template.xml', './results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/landkreise.shp');
+//geojson.generateMapniks('./mapnik.template.xml', './results/xml/', '/zensus/landkreise.shp');
 
 //geojson.logStatistics();
 

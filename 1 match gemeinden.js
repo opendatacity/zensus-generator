@@ -397,7 +397,7 @@ geojson.generateJSONs('./results/jsons/zensus%.json');
 
 // Außerdem die Konfigurationsdatei für Mapnik
 // Der zweite Parameter gibt das Shape an, dass in der Mapnik-XML referenziert werden soll.
-geojson.generateMapniks('./mapnik.template.xml', './results/xml/Zensus%.xml', '/home/mapuser/mappy/data/shapes/zensus/gemeinden.shp');
+geojson.generateMapniks('./mapnik.template.xml', './results/xml/', '/zensus/gemeinden.shp');
 
 // Anschließend noch die kleinen png-gradient rendern, die rechts unten als Legende eingeblendet werden.
 geojson.generateGradients('./results/skalen/skala-%.png'),
